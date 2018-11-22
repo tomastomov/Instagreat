@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>aspnet-Instagreat.Web-06D79659-9958-4494-8B84-8786DCBB4CB2</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Instagreat.Common\Instagreat.Common.csproj" />
+    <ProjectReference Include="..\Instagreat.Data\Instagreat.Data.csproj" />
+    <ProjectReference Include="..\Instagreat.Services\Instagreat.Services.csproj" />
+  </ItemGroup>
+
+</Project>
