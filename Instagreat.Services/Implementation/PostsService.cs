@@ -22,6 +22,25 @@
 
         public async Task<IEnumerable<AllPostsServiceModel>> AllPosts(string username)
         {
+            var userId = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
+
+            if(userId == null)
+            {
+                throw new InvalidOperationException($"No user found with name: {username}");
+            }
+
+            var posts = await this.db.Posts.Include(p => p.User).Where(u => u.UserId != userId).ProjectTo<AllPostsServiceModel>().OrderByDescending(p => p.PublishTime).ToListAsync();
+
+            if(posts == null)
+            {
+                throw new InvalidOperationException("No posts found!");
+            }
+
+            return posts;
+        }
+
+        public async Task<IEnumerable<AllPostsServiceModel>> AllPostsByUser(string username)
+        {
             var userId = this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefault();
 
             if(userId == null)
@@ -29,9 +48,47 @@
                 throw new InvalidOperationException($"No user with id: {userId} found!");
             }
 
-            var posts = await this.db.Posts.Where(p => p.UserId == userId).ProjectTo<AllPostsServiceModel>().ToListAsync();
+            var posts = await this.db.Posts.Where(p => p.UserId == userId).ProjectTo<AllPostsServiceModel>().OrderByDescending(p => p.PublishTime).ToListAsync();
 
             return posts;
+        }
+
+        public async Task<bool> CreateComment(string content, string username, int postId)
+        {
+            if(content.Length < 0)
+            {
+                return false;
+            }
+
+            var user = await this.db.Users.Where(u => u.UserName == username).FirstOrDefaultAsync();
+
+            if(user == null)
+            {
+                return false;
+            }
+
+            var post = this.db.Posts.Find(postId);
+
+            if (post == null)
+            {
+                return false;
+            }
+
+            var comment = new Comment
+            {
+                Content = content,
+                UserId = user.Id,
+                Author = user,
+                PostId = postId
+            };
+
+            await this.db.Comments.AddAsync(comment);
+
+            post.Comments.Add(comment);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<bool> CreatePost(string description, byte[] imageData, string username)
@@ -41,9 +98,9 @@
                 return false;
             }
 
-            var image = db.Images.Where(i => i.Picture == imageData).FirstOrDefault();
+            var image = await this.db.Images.Where(i => i.Picture == imageData).FirstOrDefaultAsync();
 
-            var userId = db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefault();
+            var userId = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
 
             if(userId == null)
             {
@@ -55,7 +112,7 @@
                 Description = description,
                 PublishTime = DateTime.UtcNow,
                 Image = image,
-                UserId =  userId
+                UserId = userId
             };
 
             await this.db.Posts.AddAsync(post);
@@ -63,6 +120,19 @@
             await this.db.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<AllPostsServiceModel> Details(int id)
+        {
+            var post = await this.db.Posts.Where(p => p.Id == id).Include(p => p.Comments).ProjectTo<AllPostsServiceModel>().FirstOrDefaultAsync();
+            var comments = await this.db.Comments.Include(c => c.Author).Where(c => c.PostId == id).ToListAsync();
+
+            if (post == null)
+            {
+                throw new InvalidOperationException($"Invalid post id: {id}");
+            }
+
+            return post;
         }
     }
 }

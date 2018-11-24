@@ -1,17 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Instagreat.Web.Models;
-
-namespace Instagreat.Web.Controllers
+﻿namespace Instagreat.Web.Controllers
 {
+    using System.Linq;
+    using System.Diagnostics;
+    using Services.Contracts;
+    using Microsoft.AspNetCore.Mvc;
+    using Models;
+    using System.Threading.Tasks;
+    using Models.Users;
+    using System;
+    using Microsoft.AspNetCore.Identity;
+    using Data.Models;
+
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IPostsService posts;
+        private readonly UserManager<User> userManager;
+
+        public HomeController(IPostsService posts, UserManager<User> userManager)
         {
+            this.posts = posts;
+            this.userManager = userManager;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var postsData = await this.posts.AllPosts(userManager.GetUserName(User));
+
+                var postsModel = postsData.Select(p => new MyPostsViewModel
+                {
+                    Id = p.Id,
+                    Description = p.Description,
+                    Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(p.Image.Picture)),
+                    PublishTime = p.PublishTime,
+                    UserId = p.UserId,
+                    User = p.User
+                });
+
+                return View(new AllPostsViewModel
+                {
+                    AllPosts = postsModel
+                });
+            }
+
             return View();
         }
 

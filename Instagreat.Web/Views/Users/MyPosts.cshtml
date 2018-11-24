@@ -1,24 +1,8 @@
 ﻿@model AllPostsViewModel
 @{
     ViewData["Title"] = "My Posts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h2>@ViewData["Title"]</h2>
 
-<div>
-    @foreach (var post in Model.AllPosts)
-    {
-    <div>
-        <div class="row">
-            <h3 class="col-md-12">@post.Description</h3>
-        </div>
-        <div class="row">
-            <h3 class="col-md-12">@post.PublishTime</h3>
-        </div>
-        <div class="row" style="align-content:center">
-            <img src="@post.Image" width="400px" height="400px" class="img-responsive col-md-12" />
-        </div>
-    </div>
-    <hr />
-    }
-</div>
+@await Html.PartialAsync("_PostsListingPartial",Model)

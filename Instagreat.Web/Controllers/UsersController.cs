@@ -63,14 +63,14 @@
 
             var successUploadPost = await this.posts.CreatePost(model.Description, imageAsBytes, userManager.GetUserName(User));
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(MyPosts));
             
         }
 
         [Route(nameof(MyPosts))]
         public async Task<IActionResult> MyPosts()
         {
-            var myPosts = await this.posts.AllPosts(userManager.GetUserName(User));
+            var myPosts = await this.posts.AllPostsByUser(userManager.GetUserName(User));
 
             var allPosts = myPosts.Select(p => new MyPostsViewModel
             {
@@ -85,6 +85,47 @@
             {
                 AllPosts = allPosts
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Comment(CommentFormModel model, int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["InvalidComment"] = "Invalid Comment!";
+                return RedirectToAction(nameof(MyPosts));
+            }
+
+            var success = await this.posts.CreateComment(model.Comment, userManager.GetUserName(User), id);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            TempData["SuccessfulComment"] = "You commented on the post!";
+
+            return RedirectToAction(nameof(MyPosts));
+
+        }
+
+        [Route(nameof(PostDetails) + "/{id}")]
+        public async Task<IActionResult> PostDetails(int id)
+        {
+            var postsData = await this.posts.Details(id);
+
+            var postModel = new MyPostsViewModel
+            {
+                Id = postsData.Id,
+                Description = postsData.Description,
+                Comments = postsData.Comments,
+                PublishTime = postsData.PublishTime,
+                Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(postsData.Image.Picture)),
+                UserId = postsData.UserId,
+                Likes = postsData.Likes
+            };
+
+            return View(postModel);
         }
 
     }

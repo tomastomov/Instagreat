@@ -35,3 +35,10 @@ body {
         display: none;
     }
 }
+
+.row {
+    margin: 15px;
+}
+.row button{
+    margin-left: 15px;
+}

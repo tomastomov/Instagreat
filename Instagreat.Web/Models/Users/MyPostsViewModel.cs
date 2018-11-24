@@ -1,6 +1,8 @@
 ﻿namespace Instagreat.Web.Models.Users
 {
+    using Data.Models;
     using System;
+    using System.Collections.Generic;
 
     public class MyPostsViewModel
     {
@@ -12,6 +14,13 @@
 
         public string Image { get; set; }
 
+        public User User { get; set; }
+
         public string UserId { get; set; }
+
+        public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
+
+        public IEnumerable<User> Likes { get; set; } = new List<User>();
+
     }
 }

@@ -8,6 +8,12 @@
     {
         Task<bool> CreatePost(string description, byte[] imageData, string username);
 
+        Task<IEnumerable<AllPostsServiceModel>> AllPostsByUser(string username);
+
         Task<IEnumerable<AllPostsServiceModel>> AllPosts(string username);
+
+        Task<bool> CreateComment(string content, string username, int postId);
+
+        Task<AllPostsServiceModel> Details(int id);
     }
 }
