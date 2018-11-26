@@ -1,0 +1,29 @@
+﻿@model MyPostsViewModel
+@{
+    ViewData["Title"] = "Post details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+
+<div>
+    <div class="row">
+        <h3 class="col-md-12">@Model.Description</h3>
+    </div>
+    <div class="row">
+        <h3 class="col-md-12">Posted on: @Model.PublishTime</h3>
+    </div>
+    <div class="row" style="align-content:center">
+        <img src="@Model.Image" width="400px" height="400px" class="img-responsive col-md-12" />
+    </div>
+    <div class="row">
+        <h3 class="col-md-12">Author - <a asp-controller="Users" asp-action="Profile" asp-route-username="@Model.Username">@Model.Username</a></h3>
+    </div>
+    @foreach (var comment in Model.Comments)
+    {
+        var commentAuthor = comment.Author.UserName;
+        <div class="row button" style="align-content:center">
+            <h3 class="col-md-6"><a asp-controller="Users" asp-action="Profile" asp-route-username="@commentAuthor">@commentAuthor</a>: @comment.Content</h3>
+        </div>
+    }
+</div>

@@ -12,13 +12,16 @@
     using Services.Contracts;
     using System;
 
-    [Route("users")]
+    [Route("Users")]
     [Authorize]
     public class UsersController : Controller
     {
         private readonly IPicturesService pictures;
         private readonly IPostsService posts;
         private readonly UserManager<User> userManager;
+        private const int PageSize = 3;
+        private const string Index = "Index";
+        private const string Home = "Home";
 
         public UsersController(IPicturesService pictures, IPostsService posts, UserManager<User> userManager)
         {
@@ -63,29 +66,10 @@
 
             var successUploadPost = await this.posts.CreatePost(model.Description, imageAsBytes, userManager.GetUserName(User));
 
-            return RedirectToAction(nameof(MyPosts));
+            return RedirectToAction(Index, Home);
             
         }
-
-        [Route(nameof(MyPosts))]
-        public async Task<IActionResult> MyPosts()
-        {
-            var myPosts = await this.posts.AllPostsByUser(userManager.GetUserName(User));
-
-            var allPosts = myPosts.Select(p => new MyPostsViewModel
-            {
-                Description = p.Description,
-                Id = p.Id,
-                Image = string.Format("data:image/jpg;base64,{0}",Convert.ToBase64String(p.Image.Picture)),
-                PublishTime = p.PublishTime,
-                UserId = p.UserId
-            });
-
-            return View(new AllPostsViewModel
-            {
-                AllPosts = allPosts
-            });
-        }
+        
 
         [HttpPost]
         public async Task<IActionResult> Comment(CommentFormModel model, int id)
@@ -93,7 +77,7 @@
             if (!ModelState.IsValid)
             {
                 TempData["InvalidComment"] = "Invalid Comment!";
-                return RedirectToAction(nameof(MyPosts));
+                return RedirectToAction(Index, Home);
             }
 
             var success = await this.posts.CreateComment(model.Comment, userManager.GetUserName(User), id);
@@ -103,9 +87,9 @@
                 return BadRequest();
             }
 
-            TempData["SuccessfulComment"] = "You commented on the post!";
+            TempData["SuccessfulComment"] = "You successfully commented on the post!";
 
-            return RedirectToAction(nameof(MyPosts));
+            return RedirectToAction(Index, Home);
 
         }
 
@@ -122,10 +106,39 @@
                 PublishTime = postsData.PublishTime,
                 Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(postsData.Image.Picture)),
                 UserId = postsData.UserId,
-                Likes = postsData.Likes
+                Likes = postsData.Likes,
+                Username = postsData.User.UserName
             };
 
             return View(postModel);
+        }
+
+        [Route(nameof(Profile) + "/{username}")]
+        public async Task<IActionResult> Profile(string username, int page = 1)
+        {
+            if(page <= 0)
+            {
+                page = 1;
+            }
+
+            var myPosts = await this.posts.AllPostsByUser(username, page, PageSize);
+
+            var allPosts = myPosts.Select(p => new MyPostsViewModel
+            {
+                Description = p.Description,
+                Id = p.Id,
+                Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(p.Image.Picture)),
+                PublishTime = p.PublishTime,
+                UserId = p.UserId
+            });
+
+            return View(new AllPostsViewModel
+            {
+                AllPosts = allPosts,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(await this.posts.TotalPerUser(username) / (double)PageSize),
+                Username = username
+            });
         }
 
     }

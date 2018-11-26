@@ -36,6 +36,10 @@ body {
     }
 }
 
+a.disabled{
+    pointer-events: none;
+}
+
 .row {
     margin: 15px;
 }

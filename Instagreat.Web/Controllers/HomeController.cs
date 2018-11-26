@@ -22,11 +22,18 @@
             this.userManager = userManager;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 2)
         {
+            if(page <= 0)
+            {
+                page = 1;
+            }
+
             if (User.Identity.IsAuthenticated)
             {
-                var postsData = await this.posts.AllPosts(userManager.GetUserName(User));
+                var username = userManager.GetUserName(User);
+
+                var postsData = await this.posts.AllPosts(username, page, pageSize);
 
                 var postsModel = postsData.Select(p => new MyPostsViewModel
                 {
@@ -40,7 +47,9 @@
 
                 return View(new AllPostsViewModel
                 {
-                    AllPosts = postsModel
+                    AllPosts = postsModel,
+                    CurrentPage = page,
+                    TotalPages = (int)Math.Ceiling(await this.posts.TotalExcludingUser(username) / (double)pageSize)
                 });
             }
 
