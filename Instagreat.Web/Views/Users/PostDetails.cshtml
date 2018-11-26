@@ -24,6 +24,24 @@
         var commentAuthor = comment.Author.UserName;
         <div class="row button" style="align-content:center">
             <h3 class="col-md-6"><a asp-controller="Users" asp-action="Profile" asp-route-username="@commentAuthor">@commentAuthor</a>: @comment.Content</h3>
+            <div class="row button">
+                <button class="btn btn-default col-md-2">Like</button>
+                <button id="reply" onclick="showReplyTextBox(@comment.Id)" class="btn btn-default col-md-2">Reply</button>
+            </div>
+            @foreach (var reply in comment.CommentReplies)
+            {
+                var replyAuthor = reply.Author.UserName;
+                <h3 class="col-md-6 replyForComment"><a asp-controller="Users" asp-action="Profile" asp-route-username="@replyAuthor">@replyAuthor</a>: @reply.Content</h3>
+            }
+            <div id="replyTextBox@(+comment.Id)" hidden class="row" style="display:none">
+                <form method="post" asp-controller="Users" asp-action="Reply" asp-route-commentId="@comment.Id">
+                    <textarea asp-for="Comment" id="addReply@(+comment.Id)" style="display:none" class="row button col-md-2">
+                        </textarea>
+                    <input type="submit" value="Add Reply" class="btn btn-primary btn-sm row button col-md-2" />
+                </form>
+            </div>
         </div>
     }
+
+    @await Html.PartialAsync("_CommentAndLikePartial", Model)
 </div>

@@ -1,11 +1,9 @@
 ﻿namespace Instagreat.Services.Models
 {
-    using AutoMapper;
     using Common.Mapping;
     using Data.Models;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class AllPostsServiceModel : IMapFrom<Post>
     {

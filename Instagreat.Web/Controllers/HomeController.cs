@@ -33,7 +33,7 @@
             {
                 var username = userManager.GetUserName(User);
 
-                var postsData = await this.posts.AllPosts(username, page, pageSize);
+                var postsData = await this.posts.AllPostsAsync(username, page, pageSize);
 
                 var postsModel = postsData.Select(p => new MyPostsViewModel
                 {
@@ -49,7 +49,7 @@
                 {
                     AllPosts = postsModel,
                     CurrentPage = page,
-                    TotalPages = (int)Math.Ceiling(await this.posts.TotalExcludingUser(username) / (double)pageSize)
+                    TotalPages = (int)Math.Ceiling(await this.posts.TotalExcludingUserAsync(username) / (double)pageSize)
                 });
             }
 

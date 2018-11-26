@@ -1,0 +1,12 @@
+﻿@model MyPostsViewModel
+<div class="row button">
+    <button class="btn btn-default col-md-2">Like</button>
+    <button id="comment" onclick="showCommentTextBox(@Model.Id)" class="btn btn-default col-md-2">Comment</button>
+</div>
+<div id="commentTextBox@(+Model.Id)" hidden class="row" style="display:none">
+    <form method="post" asp-controller="Users" asp-action="Comment" asp-route-id="@Model.Id">
+        <textarea asp-for="Comment" id="addComment@(+Model.Id)" style="display:none" class="row button col-md-2">
+            </textarea>
+        <input type="submit" value="Post" class="btn btn-primary btn-sm row button col-md-2" />
+    </form>
+</div>

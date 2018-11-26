@@ -1,10 +1,9 @@
 ﻿namespace Instagreat.Data.Models
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.Collections.Generic;
     using Common.Constants;
+    using System.ComponentModel.DataAnnotations;
 
-    public class Comment
+    public class Reply
     {
         public int Id { get; set; }
 
@@ -17,13 +16,9 @@
 
         public string UserId { get; set; }
 
-        public Post Post { get; set; }
+        public int CommentId { get; set; }
 
-        public int PostId { get; set; }
-
-        public List<Comment> Replies { get; set; } = new List<Comment>();
-
-        public List<Reply> CommentReplies { get; set; } = new List<Reply>();
+        public Comment Comment { get; set; }
 
     }
 }

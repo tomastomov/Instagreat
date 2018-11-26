@@ -2,7 +2,6 @@
 {
     using System.IO;
     using System.Linq;
-    using AutoMapper.QueryableExtensions;
     using System.Threading.Tasks;
     using Data.Models;
     using Microsoft.AspNetCore.Authorization;
@@ -11,6 +10,7 @@
     using Models.Users;
     using Services.Contracts;
     using System;
+    using Common.Constants;
 
     [Route("Users")]
     [Authorize]
@@ -20,8 +20,6 @@
         private readonly IPostsService posts;
         private readonly UserManager<User> userManager;
         private const int PageSize = 3;
-        private const string Index = "Index";
-        private const string Home = "Home";
 
         public UsersController(IPicturesService pictures, IPostsService posts, UserManager<User> userManager)
         {
@@ -64,23 +62,24 @@
                 return View(model);
             }
 
-            var successUploadPost = await this.posts.CreatePost(model.Description, imageAsBytes, userManager.GetUserName(User));
+            var successUploadPost = await this.posts.CreatePostAsync(model.Description, imageAsBytes, userManager.GetUserName(User));
 
-            return RedirectToAction(Index, Home);
+            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
             
         }
         
 
         [HttpPost]
+        [Route(nameof(Comment) + "/{id}")]
         public async Task<IActionResult> Comment(CommentFormModel model, int id)
         {
             if (!ModelState.IsValid)
             {
                 TempData["InvalidComment"] = "Invalid Comment!";
-                return RedirectToAction(Index, Home);
+                return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
             }
 
-            var success = await this.posts.CreateComment(model.Comment, userManager.GetUserName(User), id);
+            var success = await this.posts.CreateCommentAsync(model.Comment, userManager.GetUserName(User), id);
 
             if (!success)
             {
@@ -89,14 +88,37 @@
 
             TempData["SuccessfulComment"] = "You successfully commented on the post!";
 
-            return RedirectToAction(Index, Home);
+            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
+
+        }
+
+        [HttpPost]
+        [Route(nameof(Reply) + "/{commentId}")]
+        public async Task<IActionResult> Reply(CommentFormModel model, int commentId)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["InvalidComment"] = "Invalid Comment!";
+                return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
+            }
+
+            var success = await this.posts.ReplyToCommentAsync(model.Comment, userManager.GetUserName(User), commentId);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            TempData["SuccessfulComment"] = "You successfully replied to the comment!";
+
+            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
 
         }
 
         [Route(nameof(PostDetails) + "/{id}")]
         public async Task<IActionResult> PostDetails(int id)
         {
-            var postsData = await this.posts.Details(id);
+            var postsData = await this.posts.DetailsAsync(id);
 
             var postModel = new MyPostsViewModel
             {
@@ -121,7 +143,7 @@
                 page = 1;
             }
 
-            var myPosts = await this.posts.AllPostsByUser(username, page, PageSize);
+            var myPosts = await this.posts.AllPostsByUserAsync(username, page, PageSize);
 
             var allPosts = myPosts.Select(p => new MyPostsViewModel
             {
@@ -136,7 +158,7 @@
             {
                 AllPosts = allPosts,
                 CurrentPage = page,
-                TotalPages = (int)Math.Ceiling(await this.posts.TotalPerUser(username) / (double)PageSize),
+                TotalPages = (int)Math.Ceiling(await this.posts.TotalPerUserAsync(username) / (double)PageSize),
                 Username = username
             });
         }

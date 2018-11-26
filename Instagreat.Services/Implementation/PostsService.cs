@@ -20,7 +20,7 @@
             this.db = db;
         }
 
-        public async Task<IEnumerable<AllPostsServiceModel>> AllPosts(string username, int page = 1, int pageSize = 3)
+        public async Task<IEnumerable<AllPostsServiceModel>> AllPostsAsync(string username, int page = 1, int pageSize = 3)
         {
             var userId = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
 
@@ -39,7 +39,7 @@
             return posts;
         }
 
-        public async Task<IEnumerable<AllPostsServiceModel>> AllPostsByUser(string username,int page = 1, int pageSize = 3)
+        public async Task<IEnumerable<AllPostsServiceModel>> AllPostsByUserAsync(string username,int page = 1, int pageSize = 3)
         {
             var userId = this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefault();
 
@@ -53,7 +53,7 @@
             return posts;
         }
 
-        public async Task<bool> CreateComment(string content, string username, int postId)
+        public async Task<bool> CreateCommentAsync(string content, string username, int postId)
         {
             if(content.Length < 0)
             {
@@ -91,7 +91,7 @@
             return true;
         }
 
-        public async Task<bool> CreatePost(string description, byte[] imageData, string username)
+        public async Task<bool> CreatePostAsync(string description, byte[] imageData, string username)
         {
             if(description.Length <= 0 || imageData.Length <= 0)
             {
@@ -122,10 +122,10 @@
             return true;
         }
 
-        public async Task<AllPostsServiceModel> Details(int id)
+        public async Task<AllPostsServiceModel> DetailsAsync(int id)
         {
             var post = await this.db.Posts.Where(p => p.Id == id).Include(p => p.Comments).ProjectTo<AllPostsServiceModel>().FirstOrDefaultAsync();
-            var comments = await this.db.Comments.Include(c => c.Author).Where(c => c.PostId == id).ToListAsync();
+            var replies = await this.db.Comments.Include(c => c.Author).Include(c => c.CommentReplies).Where(p => p.PostId == id).ToListAsync();
 
             if (post == null)
             {
@@ -135,7 +135,7 @@
             return post;
         }
 
-        public async Task<int> TotalPerUser(string username)
+        public async Task<int> TotalPerUserAsync(string username)
         {
             var userId = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
 
@@ -144,13 +144,66 @@
             return postsCount;
         }
 
-        public async Task<int> TotalExcludingUser(string username)
+        public async Task<int> TotalExcludingUserAsync(string username)
         {
             var userId = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
 
             var postsCount = this.db.Posts.Where(u => u.UserId != userId).Count();
 
             return postsCount;
+        }
+
+        public async Task<bool> ReplyToCommentAsync(string content, string username, int commentId)
+        {
+            var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if(user == null)
+            {
+                return false;
+            }
+
+            else if(content.Length <= 0)
+            {
+                return false;
+            }
+
+            var comment = await this.db.Comments.Where(c => c.Id == commentId).FirstOrDefaultAsync();
+
+            if(comment == null)
+            {
+                return false;
+            }
+
+            var reply = new Reply
+            {
+                Content = content,
+                UserId = user.Id,
+                CommentId = comment.Id
+            };
+
+            await this.db.CommentReplies.AddAsync(reply);
+
+            await db.SaveChangesAsync();
+
+            return true;
+            
+        }
+
+        public async Task<bool> DeletePostAdminAsync(int postId)
+        {
+            var post = await this.db.Posts.FindAsync(postId);
+
+            if(post == null)
+            {
+                return false;
+            }
+
+            this.db.Posts.Remove(post);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
+
         }
     }
 }

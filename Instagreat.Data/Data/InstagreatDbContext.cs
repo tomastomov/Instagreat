@@ -13,6 +13,7 @@
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Reply> CommentReplies { get; set; }
         public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -38,6 +39,11 @@
                 .HasMany(p => p.Comments)
                 .WithOne(c => c.Post)
                 .HasForeignKey(p => p.PostId);
+
+            builder.Entity<Comment>()
+                .HasMany(c => c.CommentReplies)
+                .WithOne(r => r.Comment)
+                .HasForeignKey(c => c.CommentId);
 
         }
     }

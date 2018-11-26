@@ -6,18 +6,22 @@
 
     public interface IPostsService
     {
-        Task<bool> CreatePost(string description, byte[] imageData, string username);
+        Task<bool> CreatePostAsync(string description, byte[] imageData, string username);
 
-        Task<IEnumerable<AllPostsServiceModel>> AllPostsByUser(string username, int page = 1, int pageSize = 3);
+        Task<IEnumerable<AllPostsServiceModel>> AllPostsByUserAsync(string username, int page = 1, int pageSize = 3);
 
-        Task<IEnumerable<AllPostsServiceModel>> AllPosts(string username, int page = 1, int pageSize = 3);
+        Task<IEnumerable<AllPostsServiceModel>> AllPostsAsync(string username, int page = 1, int pageSize = 3);
 
-        Task<bool> CreateComment(string content, string username, int postId);
+        Task<bool> CreateCommentAsync(string content, string username, int postId);
 
-        Task<AllPostsServiceModel> Details(int id);
+        Task<bool> ReplyToCommentAsync(string content, string username, int commentId);
 
-        Task<int> TotalPerUser(string username);
+        Task<AllPostsServiceModel> DetailsAsync(int id);
 
-        Task<int> TotalExcludingUser(string username);
+        Task<bool> DeletePostAdminAsync(int postId);
+
+        Task<int> TotalPerUserAsync(string username);
+
+        Task<int> TotalExcludingUserAsync(string username);
     }
 }

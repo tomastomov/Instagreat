@@ -46,3 +46,7 @@ a.disabled{
 .row button{
     margin-left: 15px;
 }
+
+.replyForComment {
+    margin-left: 45px;
+}

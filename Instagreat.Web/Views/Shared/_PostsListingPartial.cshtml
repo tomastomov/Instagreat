@@ -18,47 +18,45 @@
                     <h3 class="col-md-12">Author - <a asp-controller="Users" asp-action="Profile" asp-route-username="@post.User.UserName">@post.User.UserName</a></h3>
                 </div>
             }
-            <div class="row button">
-                <button class="btn btn-default col-md-2">Like</button>
-                <button id="comment" onclick="showCommentTextBox(@post.Id)" class="btn btn-default col-md-2">Comment</button>
-            </div>
-            <div id="commentTextBox@(+post.Id)" hidden class="row" style="display:none">
-                <form method="post" asp-controller="Users" asp-action="Comment" asp-route-id="@post.Id">
-                    <textarea asp-for="Comment" id="addComment@(+post.Id)" style="display:none" class="row button col-md-2">
-            </textarea>
-                    <input type="submit" value="Post" class="btn btn-primary btn-sm row button col-md-2" />
-                </form>
-            </div>
+            @await Html.PartialAsync("_CommentAndLikePartial", post)
 
             <div class="row button">
                 <a asp-controller="Users" asp-action="PostDetails" asp-route-id="@post.Id" class="col-md-2">Show Comments</a>
             </div>
         </div>
+        @if (User.IsInRole(RolesConstants.ADMINISTRATOR_ROLE))
+        {
+        <div class="row button">
+            <form method="post" asp-controller="Admins" asp-action="DeletePost" asp-route-id="@post.Id">
+                <input type="submit" class="col-md-2 btn btn-danger" value="Delete Post" />
+            </form>
+        </div>
+        }
         <hr />
     }
 
-    @{ 
+    @{
         var currentController = ViewContext.RouteData.Values["controller"];
         var currentAction = ViewContext.RouteData.Values["action"];
         var previousDisabled = Model.CurrentPage == 1 ? "disabled" : string.Empty;
         var nextDisabled = Model.CurrentPage == Model.TotalPages ? "disabled" : string.Empty;
     }
-        <ul class="pagination justify-content-center">
-            <li class="page-item @previousDisabled">
-                <a class="page-link @previousDisabled" href="/@currentController/@currentAction/@Model.Username?page=@Model.PreviousPage" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous</span>
-                </a>
-            </li>
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(Model.CurrentPage == i ? "active" : string.Empty) "><a class="page-link" href="/@currentController/@currentAction/@Model.Username?page=@i">@i</a></li>
-            }
-            <li class="page-item @nextDisabled">
-                <a class="page-link @nextDisabled" href="/@currentController/@currentAction/@Model.Username?page=@Model.NextPage" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </li>
-        </ul>
+    <ul class="pagination justify-content-center">
+        <li class="page-item @previousDisabled">
+            <a class="page-link @previousDisabled" href="/@currentController/@currentAction/@Model.Username?page=@Model.PreviousPage" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(Model.CurrentPage == i ? "active" : string.Empty) "><a class="page-link" href="/@currentController/@currentAction/@Model.Username?page=@i">@i</a></li>
+        }
+        <li class="page-item @nextDisabled">
+            <a class="page-link @nextDisabled" href="/@currentController/@currentAction/@Model.Username?page=@Model.NextPage" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+            </a>
+        </li>
+    </ul>
 </div>
