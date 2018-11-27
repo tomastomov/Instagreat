@@ -21,7 +21,7 @@
             @await Html.PartialAsync("_CommentAndLikePartial", post)
 
             <div class="row button">
-                <a asp-controller="Users" asp-action="PostDetails" asp-route-id="@post.Id" class="col-md-2">Show Comments</a>
+                <a asp-controller="Posts" asp-action="PostDetails" asp-route-id="@post.Id" class="col-md-2">Show Comments</a>
             </div>
         </div>
         @if (User.IsInRole(RolesConstants.ADMINISTRATOR_ROLE))
@@ -36,7 +36,7 @@
         else if (post.User.UserName == User.Identity.Name)
         {
             <div class="row button">
-                <form method="post" onclick="return confirm('Are you sure you want to delete this?')" asp-controller="Users" asp-action="DeletePost" asp-route-postId="@post.Id" asp-route-userId="@post.UserId">
+                <form method="post" onclick="return confirm('Are you sure you want to delete this?')" asp-controller="Posts" asp-action="DeletePost" asp-route-postId="@post.Id" asp-route-userId="@post.UserId">
                     <input type="submit" class="col-md-2 btn btn-danger" value="Delete Post" />
                 </form>
             </div>

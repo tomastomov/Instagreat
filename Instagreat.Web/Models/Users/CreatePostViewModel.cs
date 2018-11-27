@@ -12,7 +12,6 @@
         public string Description { get; set; }
 
         [Required]
-        [MinLength(1)]
         public IFormFile Image { get; set; }
         
     }

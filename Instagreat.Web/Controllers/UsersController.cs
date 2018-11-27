@@ -16,125 +16,16 @@
     [Authorize]
     public class UsersController : Controller
     {
-        private readonly IPicturesService pictures;
         private readonly IPostsService posts;
         private readonly UserManager<User> userManager;
         private const int PageSize = 3;
 
-        public UsersController(IPicturesService pictures, IPostsService posts, UserManager<User> userManager)
+        public UsersController(IPostsService posts, UserManager<User> userManager)
         {
-            this.pictures = pictures;
             this.posts = posts;
             this.userManager = userManager;
         }
-
-        [Route(nameof(Create))]
-        public async Task<IActionResult> Create()
-        {
-            return View();
-        }
-
-        [Route(nameof(Create))]
-        [HttpPost]
-        public async Task<IActionResult> Create(CreatePostViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            byte[] imageAsBytes = new byte[model.Image.Length + 1];
-
-            if(model.Image.Length > 0)
-            {
-                using (var stream = new MemoryStream())
-                {
-                    await model.Image.CopyToAsync(stream);
-                    imageAsBytes = stream.ToArray();
-                }
-            }
-
-            var successSavePicture = await this.pictures.CreatePictureAsync(imageAsBytes, userManager.GetUserName(User));
-
-            if (!successSavePicture)
-            {
-                ModelState.AddModelError("Picture", "No picture uploaded!");
-                return View(model);
-            }
-
-            var successUploadPost = await this.posts.CreatePostAsync(model.Description, imageAsBytes, userManager.GetUserName(User));
-
-            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-            
-        }
         
-
-        [HttpPost]
-        [Route(nameof(Comment) + "/{id}")]
-        public async Task<IActionResult> Comment(CommentFormModel model, int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["InvalidComment"] = "Invalid Comment!";
-                return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-            }
-
-            var success = await this.posts.CreateCommentAsync(model.Comment, userManager.GetUserName(User), id);
-
-            if (!success)
-            {
-                return BadRequest();
-            }
-
-            TempData["SuccessfulComment"] = "You successfully commented on the post!";
-
-            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-
-        }
-
-        [HttpPost]
-        [Route(nameof(Reply) + "/{commentId}")]
-        public async Task<IActionResult> Reply(CommentFormModel model, int commentId)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["InvalidComment"] = "Invalid Comment!";
-                return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-            }
-
-            var success = await this.posts.ReplyToCommentAsync(model.Comment, userManager.GetUserName(User), commentId);
-
-            if (!success)
-            {
-                return BadRequest();
-            }
-
-            TempData["SuccessfulComment"] = "You successfully replied to the comment!";
-
-            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-
-        }
-
-        [Route(nameof(PostDetails) + "/{id}")]
-        public async Task<IActionResult> PostDetails(int id)
-        {
-            var postsData = await this.posts.DetailsAsync(id);
-
-            var postModel = new MyPostsViewModel
-            {
-                Id = postsData.Id,
-                Description = postsData.Description,
-                Comments = postsData.Comments,
-                PublishTime = postsData.PublishTime,
-                Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(postsData.Image.Picture)),
-                UserId = postsData.UserId,
-                Likes = postsData.Likes,
-                Username = postsData.User.UserName
-            };
-
-            return View(postModel);
-        }
-
         [Route(nameof(Profile) + "/{username}")]
         public async Task<IActionResult> Profile(string username, int page = 1)
         {
@@ -163,44 +54,7 @@
                 Username = username
             });
         }
-
-        [HttpPost]
-        [Route(nameof(DeletePost) + "/{postId}")]
-        public async Task<IActionResult> DeletePost(int postId, string userId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var success = await this.posts.DeletePostAsync(postId,userId);
-
-            if (!success)
-            {
-                return BadRequest();
-            }
-
-            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-        }
-
-        [HttpPost]
-        [Route(nameof(DeleteComment) + "/{commentId}")]
-        public async Task<IActionResult> DeleteComment(int commentId, string userId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var success = await this.posts.DeleteCommentAsync(commentId, userId);
-
-            if (!success)
-            {
-                return BadRequest();
-            }
-
-            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-        }
+        
 
     }
 }

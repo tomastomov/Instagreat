@@ -11,16 +11,8 @@
         Task<IEnumerable<AllPostsServiceModel>> AllPostsByUserAsync(string username, int page = 1, int pageSize = 3);
 
         Task<IEnumerable<AllPostsServiceModel>> AllPostsAsync(string username, int page = 1, int pageSize = 3);
-
-        Task<bool> CreateCommentAsync(string content, string username, int postId);
-
-        Task<bool> ReplyToCommentAsync(string content, string username, int commentId);
-
+        
         Task<AllPostsServiceModel> DetailsAsync(int id);
-
-        Task<bool> DeleteCommentAdminAsync(int commentId);
-
-        Task<bool> DeleteCommentAsync(int commentId, string userId);
 
         Task<bool> DeletePostAdminAsync(int postId);
 

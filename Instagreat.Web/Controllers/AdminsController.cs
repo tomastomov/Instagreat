@@ -11,10 +11,12 @@
     public class AdminsController : Controller
     {
         private readonly IPostsService posts;
+        private readonly ICommentsService comments;
 
-        public AdminsController(IPostsService posts)
+        public AdminsController(IPostsService posts, ICommentsService comments)
         {
             this.posts = posts;
+            this.comments = comments;
         }
 
         [HttpPost]
@@ -45,7 +47,7 @@
                 return BadRequest();
             }
 
-            var success = await this.posts.DeleteCommentAdminAsync(id);
+            var success = await this.comments.DeleteCommentAdminAsync(id);
 
             if (!success)
             {
