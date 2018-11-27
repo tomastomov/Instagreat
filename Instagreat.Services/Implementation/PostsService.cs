@@ -29,7 +29,7 @@
                 throw new InvalidOperationException($"No user found with name: {username}");
             }
 
-            var posts = await this.db.Posts.OrderByDescending(p => p.PublishTime).Where(p => p.UserId != userId).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>().ToListAsync();
+            var posts = await this.db.Posts.Include(p => p.User).OrderByDescending(p => p.PublishTime).Where(p => p.UserId != userId).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>().ToListAsync();
 
             if (posts == null)
             {
@@ -204,6 +204,63 @@
 
             return true;
 
+        }
+
+        public async Task<bool> DeletePostAsync(int postId, string userId)
+        {
+            var post = await this.db.Posts.FindAsync(postId);
+
+            if (post == null)
+            {
+                return false;
+            }
+            else if(post.UserId != userId)
+            {
+                return false;
+            }
+
+            this.db.Posts.Remove(post);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
+            
+        }
+
+        public async Task<bool> DeleteCommentAdminAsync(int commentId)
+        {
+            var comment = await this.db.Comments.FindAsync(commentId);
+
+            if(comment == null)
+            {
+                return false;
+            }
+
+            this.db.Comments.Remove(comment);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeleteCommentAsync(int commentId, string userId)
+        {
+            var comment = await this.db.Comments.FindAsync(commentId);
+
+            if (comment == null)
+            {
+                return false;
+            }
+            else if(comment.UserId != userId)
+            {
+                return false;
+            }
+
+            this.db.Comments.Remove(comment);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
         }
     }
 }

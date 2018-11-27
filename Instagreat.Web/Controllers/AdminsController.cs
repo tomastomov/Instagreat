@@ -18,6 +18,7 @@
         }
 
         [HttpPost]
+        [Route(nameof(DeletePost) + "/{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
             if (!ModelState.IsValid)
@@ -26,6 +27,25 @@
             }
 
             var success = await this.posts.DeletePostAdminAsync(id);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
+        }
+
+        [HttpPost]
+        [Route(nameof(DeleteComment) + "/{id}")]
+        public async Task<IActionResult> DeleteComment(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var success = await this.posts.DeleteCommentAdminAsync(id);
 
             if (!success)
             {

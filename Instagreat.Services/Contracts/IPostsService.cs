@@ -18,7 +18,13 @@
 
         Task<AllPostsServiceModel> DetailsAsync(int id);
 
+        Task<bool> DeleteCommentAdminAsync(int commentId);
+
+        Task<bool> DeleteCommentAsync(int commentId, string userId);
+
         Task<bool> DeletePostAdminAsync(int postId);
+
+        Task<bool> DeletePostAsync(int postId, string userId);
 
         Task<int> TotalPerUserAsync(string username);
 

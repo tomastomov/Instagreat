@@ -26,11 +26,20 @@
         </div>
         @if (User.IsInRole(RolesConstants.ADMINISTRATOR_ROLE))
         {
-        <div class="row button">
-            <form method="post" asp-controller="Admins" asp-action="DeletePost" asp-route-id="@post.Id">
-                <input type="submit" class="col-md-2 btn btn-danger" value="Delete Post" />
-            </form>
-        </div>
+            <div class="row button">
+                <form method="post" onclick="return confirm('Are you sure you want to delete this?')" asp-controller="Admins" asp-action="DeletePost" asp-route-id="@post.Id">
+                    <input type="submit" class="col-md-2 btn btn-danger" value="Delete Post" />
+                </form>
+            </div>
+        }
+
+        else if (post.User.UserName == User.Identity.Name)
+        {
+            <div class="row button">
+                <form method="post" onclick="return confirm('Are you sure you want to delete this?')" asp-controller="Users" asp-action="DeletePost" asp-route-postId="@post.Id" asp-route-userId="@post.UserId">
+                    <input type="submit" class="col-md-2 btn btn-danger" value="Delete Post" />
+                </form>
+            </div>
         }
         <hr />
     }

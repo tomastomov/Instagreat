@@ -151,7 +151,8 @@
                 Id = p.Id,
                 Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(p.Image.Picture)),
                 PublishTime = p.PublishTime,
-                UserId = p.UserId
+                UserId = p.UserId,
+                User = p.User
             });
 
             return View(new AllPostsViewModel
@@ -161,6 +162,44 @@
                 TotalPages = (int)Math.Ceiling(await this.posts.TotalPerUserAsync(username) / (double)PageSize),
                 Username = username
             });
+        }
+
+        [HttpPost]
+        [Route(nameof(DeletePost) + "/{postId}")]
+        public async Task<IActionResult> DeletePost(int postId, string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var success = await this.posts.DeletePostAsync(postId,userId);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
+        }
+
+        [HttpPost]
+        [Route(nameof(DeleteComment) + "/{commentId}")]
+        public async Task<IActionResult> DeleteComment(int commentId, string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var success = await this.posts.DeleteCommentAsync(commentId, userId);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
         }
 
     }
