@@ -24,7 +24,7 @@
 
         public List<Comment> Comments { get; set; } = new List<Comment>();
 
-        public List<User> Likes { get; set; } = new List<User>();
+        public ISet<User> Likes { get; set; } = new HashSet<User>();
 
     }
 }

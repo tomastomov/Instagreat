@@ -26,5 +26,7 @@
 
         public IEnumerable<User> Likes { get; set; } = new List<User>();
 
+        public bool IsLiked { get; set; }
+
     }
 }

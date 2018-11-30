@@ -152,6 +152,87 @@
             return true;
             
         }
-        
+
+        public async Task<bool> AddLikeAsync(string username, int postId)
+        {
+            var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if(user == null)
+            {
+                return false;
+            }
+
+            var post = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+
+            if(post == null)
+            {
+                return false;
+            }
+
+            if (post.Likes.Contains(user))
+            {
+                return false;
+            }
+
+            post.Likes.Add(user);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> RemoveLikeAsync(string username, int postId)
+        {
+            var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var post = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+
+            if (post == null)
+            {
+                return false;
+            }
+
+            if (!post.Likes.Contains(user))
+            {
+                return false;
+            }
+
+            post.Likes.Remove(user);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public bool IsLiked(string username, int postId)
+        {
+            var user = this.db.Users.FirstOrDefault(u => u.UserName == username);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var post = this.db.Posts.FirstOrDefault(p => p.Id == postId);
+
+            if (post == null)
+            {
+                return false;
+            }
+
+            if (post.Likes.Contains(user))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

@@ -42,7 +42,10 @@
                     Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(p.Image.Picture)),
                     PublishTime = p.PublishTime,
                     UserId = p.UserId,
-                    User = p.User
+                    User = p.User,
+                    Likes = p.Likes,
+                    Username = User.Identity.Name,
+                    IsLiked = this.posts.IsLiked(username, p.Id)
                 });
 
                 return View(new AllPostsViewModel

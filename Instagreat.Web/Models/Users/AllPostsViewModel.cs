@@ -10,6 +10,8 @@
 
         public string Username { get; set; }
 
+        public string Biography { get; set; }
+
         public int TotalPages { get; set; }
         public int PreviousPage => this.CurrentPage == 1 ? 1 : this.CurrentPage - 1;
 

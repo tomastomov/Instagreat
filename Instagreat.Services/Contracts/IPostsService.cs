@@ -21,5 +21,11 @@
         Task<int> TotalPerUserAsync(string username);
 
         Task<int> TotalExcludingUserAsync(string username);
+
+        Task<bool> AddLikeAsync(string username,int postId);
+
+        Task<bool> RemoveLikeAsync(string username, int postId);
+
+        bool IsLiked(string username, int postId);
     }
 }

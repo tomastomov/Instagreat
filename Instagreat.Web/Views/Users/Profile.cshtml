@@ -3,6 +3,28 @@
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>@ViewData["Title"]</h2>
+<h2 style="text-align:center">@ViewData["Title"]</h2>
+
+@{ 
+    var biography = Model.Biography != null ? Model.Biography : "No biography yet!";
+}
+
+<h2 style="text-align:center">Bio</h2>
+<h3 style="text-align:center">@biography</h3>
+@if(Model.Username == User.Identity.Name)
+{
+<div class="row">
+    <button id="biography" onclick="showBiographyTextBox()" class="btn btn-default col-md-2">Update biography</button>
+</div>
+<div id="biographyTextBox" hidden class="row" style="display:none">
+    <form method="post" asp-controller="Users" asp-action="AddBiography" asp-route-username="@Model.Username">
+        <textarea asp-for="Biography" id="addBiography" style="display:none" class="row button col-md-2">
+            </textarea>
+        <input type="submit" value="Update biography" class="btn btn-primary btn-sm row button col-md-2" />
+    </form>
+</div>
+}
+
+<h3 style="text-align:center">Posts</h3>
 
 @await Html.PartialAsync("_PostsListingPartial", Model)
