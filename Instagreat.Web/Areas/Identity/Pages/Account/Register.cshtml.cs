@@ -9,6 +9,7 @@
     using Microsoft.Extensions.Logging;
     using Data.Models;
     using Common.Constants;
+    using Services.Contracts;
 
     [AllowAnonymous]
     public class RegisterModel : PageModel
@@ -16,15 +17,18 @@
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly IPicturesService pictures;
 
         public RegisterModel(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            ILogger<RegisterModel> logger)
+            ILogger<RegisterModel> logger, 
+            IPicturesService pictures)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            this.pictures = pictures;
         }
 
         [BindProperty]
@@ -54,6 +58,7 @@
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            
         }
 
         public void OnGet(string returnUrl = null)
@@ -66,11 +71,15 @@
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = Input.Username, Email = Input.Email };
+                var profilePicture = await this.pictures.GetDefaultPicture();
+
+                var user = new User { UserName = Input.Username, Email = Input.Email};
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    await this.pictures.SetProfilePictureAsync(profilePicture, Input.Username);
                    
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);

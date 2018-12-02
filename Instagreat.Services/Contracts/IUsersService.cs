@@ -7,5 +7,6 @@
         Task<string> GetUserBiographyAsync(string username);
 
         Task<bool> AddBiographyAsync(string biography, string username);
+        
     }
 }

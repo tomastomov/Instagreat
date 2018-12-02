@@ -4,8 +4,9 @@
     using Data;
     using Data.Models;
     using Contracts;
-    using Instagreat.Data;
     using System.Linq;
+    using Microsoft.EntityFrameworkCore;
+    using System;
 
     public class PicturesService : IPicturesService
     {
@@ -37,6 +38,73 @@
             };
             
             user.Images.Add(image);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<byte[]> GetDefaultPicture(int id = 6008)
+        {
+            var image = await this.db.Images.FirstOrDefaultAsync(i => i.Id == id);
+
+            if(image == null)
+            {
+                throw new InvalidOperationException($"Not image with id: {id} found!");
+            }
+
+            return image.Picture;
+        }
+
+        public async Task<string> GetProfilePictureAsync(string username)
+        {
+            var user = await this.db.Users.Include(u => u.ProfilePicture).FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+            {
+                throw new InvalidOperationException($"No users with username: {username} found");
+            }
+
+            var image = user.ProfilePicture;
+
+            if(image == null)
+            {
+                return "No profile picture yet!";
+            }
+
+            var imageAsString = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(image.Picture));
+
+            return imageAsString;
+        }
+
+        public async Task<bool> SetProfilePictureAsync(byte[] pictureData, string username)
+        {
+            if (pictureData.Length < 0)
+            {
+                return false;
+            }
+
+            var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var image = await this.db.Images.Where(i => i.Picture == pictureData).FirstOrDefaultAsync();
+
+            if(image == null)
+            {
+                image = new Image
+                {
+                    Picture = pictureData,
+                    UserId = user.Id
+                };
+
+                await this.db.Images.AddAsync(image);
+            }
+
+            user.ProfilePicture = image;
 
             await this.db.SaveChangesAsync();
 

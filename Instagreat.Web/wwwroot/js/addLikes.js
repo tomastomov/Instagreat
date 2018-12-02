@@ -6,8 +6,6 @@
         'postId': postId
     };
 
-    console.log('after data');
-
     if (!likeButton.hasClass('active')) {
         likeButton.addClass('active');
         $.ajax({
