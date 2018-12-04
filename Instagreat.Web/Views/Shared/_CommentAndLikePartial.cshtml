@@ -3,7 +3,7 @@
     var active = Model.IsLiked ? "active" : string.Empty;
 }
 <div class="row button">
-    <button id="likeBtn@(+Model.Id)" onclick="like(@($"'{Model.Username}'"),@Model.Id,@($"'{Model.IsLiked}'"),@Model.Likes.Count())" class="btn @active btn-default col-md-2">Like</button>
+    <button id="likeBtn@(+Model.Id)" onclick="like(@($"'{User.Identity.Name}'"),@Model.Id,@($"'{Model.IsLiked}'"),@Model.Likes.Count())" class="btn @active btn-default col-md-2">Like</button>
     <button id="comment" onclick="showCommentTextBox(@Model.Id)" class="btn btn-default col-md-2">Comment</button>
 </div>
 <div id="commentTextBox@(+Model.Id)" hidden class="row" style="display:none">

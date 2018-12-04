@@ -10,8 +10,6 @@
     using Models.Users;
     using Services.Contracts;
     using System;
-    using Common.Constants;
-    using Microsoft.AspNetCore.Http;
 
     [Route("Users")]
     [Authorize]
@@ -49,9 +47,11 @@
                 PublishTime = p.PublishTime,
                 UserId = p.UserId,
                 User = p.User,
-                Likes = p.Likes
+                Username = username,
+                Likes = p.Likes,
+                IsLiked = this.posts.IsLiked(username, p.Id)
             });
-
+            
             return View(new AllPostsViewModel
             {
                 AllPosts = allPosts,
@@ -59,7 +59,7 @@
                 TotalPages = (int)Math.Ceiling(await this.posts.TotalPerUserAsync(username) / (double)PageSize),
                 Username = username,
                 Biography = await this.users.GetUserBiographyAsync(username),
-                ProfilePicture = await this.pictures.GetProfilePictureAsync(username)
+                ProfilePicture = await this.pictures.GetProfilePictureAsync(username),
             });
         }
 

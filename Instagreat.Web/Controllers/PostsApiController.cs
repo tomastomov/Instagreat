@@ -5,26 +5,19 @@
     using Microsoft.AspNetCore.Mvc;
     using Models.Users;
     using System;
-
+    
     [Route("api/posts")]
     public class PostsApiController : Controller
     {
         private readonly IPostsService posts;
+        private readonly IPicturesService pictures;
 
-        public PostsApiController(IPostsService posts)
+        public PostsApiController(IPostsService posts, IPicturesService pictures)
         {
             this.posts = posts;
+            this.pictures = pictures;
         }
-
-        [HttpGet]
-        [Route(nameof(GetPosts))]
-        public async Task<IActionResult> GetPosts()
-        {
-            var postsData = await posts.AllPostsAsync(User.Identity.Name);
-
-            return Ok(postsData);
-        }
-
+                
         [HttpPost]
         [Route(nameof(AddLike))]
         public async Task<IActionResult> AddLike([FromBody] AddLikesFormModel model)

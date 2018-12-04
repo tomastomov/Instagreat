@@ -87,7 +87,8 @@
         public async Task<AllPostsServiceModel> DetailsAsync(int id)
         {
             var post = await this.db.Posts.Where(p => p.Id == id).Include(p => p.Comments).ProjectTo<AllPostsServiceModel>().FirstOrDefaultAsync();
-            var replies = await this.db.Comments.Include(c => c.Author).Include(c => c.CommentReplies).Where(p => p.PostId == id).ToListAsync();
+            var replies = await this.db.Comments.Include(c => c.Author).ThenInclude(c => c.ProfilePicture).Where(p => p.PostId == id).ToListAsync();
+            var commentReplies = await this.db.CommentReplies.Include(c => c.Author).ThenInclude(c => c.ProfilePicture).Where(p => replies.Contains(p.Comment)).ToListAsync();
 
             if (post == null)
             {
@@ -234,5 +235,6 @@
                 return false;
             }
         }
+        
     }
 }

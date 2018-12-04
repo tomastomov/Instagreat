@@ -1,13 +1,15 @@
-﻿function like(username ,postId, isClicked, likesCount) {
+﻿function like(username ,postId, isClicked) {
     let likeButton = $(`#likeBtn${postId}`);
     let baseUrl = "https://localhost:44382/api/posts";
     let data = {
         'username': username,
         'postId': postId
     };
-
+    let likesDiv = $(`#likes${postId}`);
+    
     if (!likeButton.hasClass('active')) {
         likeButton.addClass('active');
+        
         $.ajax({
             url: baseUrl + "/AddLike",
             method: "POST",
@@ -19,14 +21,14 @@
             },
             data: JSON.stringify(data),
             success: function () {
-                $(`#likes${postId}`).text(`${likesCount + 1} Likes`)
+                let likesText = likesDiv.text();
+                likesDiv.text(`${+likesText + 1}`)
             },
             error: function (msg) {
                 console.dir(msg);
             }
         });
-
-        isClicked = true;
+        
     }
     else {
         likeButton.removeClass('active');
@@ -40,12 +42,12 @@
             },
             data: JSON.stringify(data),
             success: function (result) {
-                $(`#likes${postId}`).text(`${likesCount} Likes`)
+                let likesText = likesDiv.text();
+                likesDiv.text(`${+likesText - 1}`)
             },
             error: function (msg) {
                 console.dir(msg);
             }
         });
-        isClicked = false;
     }
 }

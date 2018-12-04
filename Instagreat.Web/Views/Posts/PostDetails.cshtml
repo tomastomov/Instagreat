@@ -19,11 +19,14 @@
     <div class="row">
         <h3 class="col-md-12">Author - <a asp-controller="Users" asp-action="Profile" asp-route-username="@Model.Username">@Model.Username</a></h3>
     </div>
+    <div class="row">
+        <h3 id="likes@(+Model.Id)" class="col-md-12">@Model.Likes.Count()</h3> <h4>Likes</h4>
+    </div>
     @foreach (var comment in Model.Comments)
     {
         var commentAuthor = comment.Author.UserName;
         <div class="row button" style="align-content:center">
-            <h3 class="col-md-4"><a asp-controller="Users" asp-action="Profile" asp-route-username="@commentAuthor">@commentAuthor</a>: @comment.Content</h3>
+            <h3 class="col-md-4"><a asp-controller="Users" asp-action="Profile" asp-route-username="@commentAuthor"><img class="img-rounded" src="@comment.Author.ProfilePicture.ToImageString()" height="48px" width="48px" /> @commentAuthor</a>: @comment.Content</h3>
             <div class="row button">
                 <button class="btn btn-default col-md-1">Like</button>
                 <button id="reply" onclick="showReplyTextBox(@comment.Id)" class="btn btn-default col-md-1">Reply</button>
@@ -43,7 +46,7 @@
             @foreach (var reply in comment.CommentReplies)
             {
                 var replyAuthor = reply.Author.UserName;
-                <h3 class="col-md-6 replyForComment"><a asp-controller="Users" asp-action="Profile" asp-route-username="@replyAuthor">@replyAuthor</a>: @reply.Content</h3>
+                <h3 class="col-md-6 replyForComment"><a asp-controller="Users" asp-action="Profile" asp-route-username="@replyAuthor"><img src="@reply.Author.ProfilePicture.ToImageString()" width="48px" height="48px" class="img-rounded" /> @replyAuthor</a>: @reply.Content</h3>
             }
             <div id="replyTextBox@(+comment.Id)" hidden class="row" style="display:none">
                 <form method="post" asp-controller="Comments" asp-action="Reply" asp-route-commentId="@comment.Id">

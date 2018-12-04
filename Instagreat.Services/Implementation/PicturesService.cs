@@ -7,6 +7,8 @@
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using System;
+    using Instagreat.Services.Models;
+    using System.Collections.Generic;
 
     public class PicturesService : IPicturesService
     {
@@ -110,5 +112,6 @@
 
             return true;
         }
+        
     }
 }

@@ -1,7 +1,8 @@
 ﻿namespace Instagreat.Services.Contracts
 {
+    using Models;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Data.Models;
 
     public interface IPicturesService
     {
@@ -12,5 +13,6 @@
         Task<bool> SetProfilePictureAsync(byte[] pictureData, string username);
 
         Task<byte[]> GetDefaultPicture(int id = 6008);
+        
     }
 }

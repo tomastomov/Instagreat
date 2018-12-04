@@ -24,7 +24,7 @@
                     <h3 class="col-md-12">Posted on @post.PublishTime.ToShortDateString()</h3>
                 </div>
                 <div class="row">
-                    <h3 id="likes@(+post.Id)" class="col-md-12">@post.Likes.Count() Likes</h3>
+                    <h3 id="likes@(+post.Id)" class="col-md-12">@post.Likes.Count()</h3> <h4>Likes</h4>
                 </div>
                 @if (post.User != null)
                 {

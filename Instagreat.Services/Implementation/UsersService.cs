@@ -36,7 +36,7 @@
 
             return true;
         }
-
+        
         public async Task<string> GetUserBiographyAsync(string username)
         {
             var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);

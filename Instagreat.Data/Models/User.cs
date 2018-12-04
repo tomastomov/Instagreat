@@ -4,6 +4,7 @@
     using System.ComponentModel.DataAnnotations;
     using Microsoft.AspNetCore.Identity;
     using Common.Constants;
+    using System;
 
     public class User : IdentityUser
     {
@@ -17,9 +18,5 @@
         public List<Comment> Comments { get; set; } = new List<Comment>();
 
         public List<Post> Posts { get; set; } = new List<Post>();
-
-        public List<User> Followers { get; set; } = new List<User>();
-
-        public List<User> Following { get; set; } = new List<User>();
     }
 }

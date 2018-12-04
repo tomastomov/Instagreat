@@ -9,8 +9,10 @@
     using System.Threading.Tasks;
     using Common.Constants;
     using Models.Users;
+    using Microsoft.AspNetCore.Authorization;
 
     [Route("posts")]
+    [Authorize]
     public class PostsController : Controller
     {
         private readonly IPicturesService pictures;
@@ -78,7 +80,8 @@
                 Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(postsData.Image.Picture)),
                 UserId = postsData.UserId,
                 Likes = postsData.Likes,
-                Username = postsData.User.UserName
+                Username = postsData.User.UserName,
+                IsLiked = this.posts.IsLiked(User.Identity.Name,id)
             };
 
             return View(postModel);
