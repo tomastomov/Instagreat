@@ -86,6 +86,7 @@
 
             return View(postModel);
         }
+        
 
         [HttpPost]
         [Route(nameof(DeletePost) + "/{postId}")]

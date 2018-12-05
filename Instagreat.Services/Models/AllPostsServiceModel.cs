@@ -11,6 +11,8 @@
 
         public string Description { get; set; }
 
+        public bool IsActive { get; set; }
+
         public DateTime PublishTime { get; set; }
 
         public int ImageId { get; set; }

@@ -12,6 +12,8 @@
         [MaxLength(ValidationConstants.MAX_POST_DESCRIPTION_LENGTH)]
         public string Description { get; set; }
 
+        public bool IsActive { get; set; } = true;
+
         public DateTime PublishTime { get; set; }
 
         public Image Image { get; set; }

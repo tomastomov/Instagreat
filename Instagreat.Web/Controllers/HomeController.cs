@@ -39,7 +39,7 @@
                 {
                     Id = p.Id,
                     Description = p.Description,
-                    Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(p.Image.Picture)),
+                    Image = p.Image.ToImageString(),
                     PublishTime = p.PublishTime,
                     UserId = p.UserId,
                     User = p.User,

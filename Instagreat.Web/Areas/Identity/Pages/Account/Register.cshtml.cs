@@ -73,7 +73,7 @@
             {
                 var profilePicture = await this.pictures.GetDefaultPicture();
 
-                var user = new User { UserName = Input.Username, Email = Input.Email};
+                var user = new User { UserName = Input.Username, Email = Input.Email, IsActive = true};
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

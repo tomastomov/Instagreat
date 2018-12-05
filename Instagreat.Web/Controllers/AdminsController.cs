@@ -5,6 +5,8 @@
     using Microsoft.AspNetCore.Mvc;
     using Common.Constants;
     using Services.Contracts;
+    using Microsoft.AspNetCore.Identity;
+    using Data.Models;
 
     [Route("admin")]
     [Authorize(Roles = RolesConstants.ADMINISTRATOR_ROLE)]
@@ -12,11 +14,57 @@
     {
         private readonly IPostsService posts;
         private readonly ICommentsService comments;
+        private readonly IUsersService users;
+        private readonly UserManager<User> userManager;
 
-        public AdminsController(IPostsService posts, ICommentsService comments)
+        public AdminsController(IPostsService posts, 
+            ICommentsService comments, 
+            IUsersService users, 
+            UserManager<User> userManager)
         {
             this.posts = posts;
             this.comments = comments;
+            this.users = users;
+            this.userManager = userManager;
+        }
+
+        [Route(nameof(AllUsers))]
+        public async Task<IActionResult> AllUsers()
+        {
+            var allUsers = await this.users.AllUsersAsync();
+
+            return View(allUsers);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeUserStatus(string id, bool isActive)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var success = false;
+
+            if (isActive)
+            {
+                success = await this.users.DeactivateUserAsync(id);
+            }
+            else
+            {
+                success = await this.users.ActivateUserAsync(id);
+            }
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                TempData["Success"] = "Successfully changed user status!";
+            }
+            
+            return RedirectToAction(nameof(AllUsers));
         }
 
         [HttpPost]

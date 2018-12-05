@@ -29,7 +29,7 @@
                 throw new InvalidOperationException($"No user found with name: {username}");
             }
 
-            var posts = await this.db.Posts.Include(p => p.User).OrderByDescending(p => p.PublishTime).Where(p => p.UserId != userId).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>().ToListAsync();
+            var posts = await this.db.Posts.Include(p => p.User).OrderByDescending(p => p.PublishTime).Where(p => p.UserId != userId && p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>().ToListAsync();
 
             if (posts == null)
             {
@@ -74,7 +74,8 @@
                 Description = description,
                 PublishTime = DateTime.UtcNow,
                 Image = image,
-                UserId = userId
+                UserId = userId,
+                IsActive = true
             };
 
             await this.db.Posts.AddAsync(post);
@@ -111,7 +112,7 @@
         {
             var userId = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
 
-            var postsCount = this.db.Posts.Where(u => u.UserId != userId).Count();
+            var postsCount = this.db.Posts.Where(p => p.UserId != userId && p.IsActive).Count();
 
             return postsCount;
         }

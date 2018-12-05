@@ -22,21 +22,20 @@ else
     <h2 style="text-align:center">No profile picture yet!</h2>
 }
 
-
-<div class="row button">
-    <button class="btn btn-primary col-md-2" onclick="showProfilePicture()">Add Profile Picture</button>
-</div>
-<div id="profilePicture" class="row button" style="display:none">
-    <form method="post" asp-controller="Users" asp-action="SetProfilePicture" asp-route-username="@Model.Username" enctype="multipart/form-data">
-        <input asp-for="ProfilePicture" type="file" />
-        <input class="btn btn-primary " type="submit" value="Save" />
-    </form>
-</div>
-
 <h2 style="text-align:center">Bio</h2>
 <h3 style="text-align:center">@biography</h3>
 @if (Model.Username == User.Identity.Name)
 {
+    <div class="row button">
+        <button class="btn btn-primary col-md-2" onclick="showProfilePicture()">Add Profile Picture</button>
+    </div>
+    <div id="profilePicture" class="row button" style="display:none">
+        <form method="post" asp-controller="Users" asp-action="SetProfilePicture" asp-route-username="@Model.Username" enctype="multipart/form-data">
+            <input asp-for="ProfilePicture" type="file" />
+            <input class="btn btn-primary " type="submit" value="Save" />
+        </form>
+    </div>
+
     <div class="row">
         <button id="biography" onclick="showBiographyTextBox()" class="btn btn-default col-md-2">Update biography</button>
     </div>

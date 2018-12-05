@@ -37,13 +37,20 @@
                 page = 1;
             }
 
+            var isActive = await this.users.IsUserActive(username);
+
+            if (!isActive)
+            {
+                return View("Deactivated");
+            }
+
             var myPosts = await this.posts.AllPostsByUserAsync(username, page, PageSize);
 
             var allPosts = myPosts.Select(p => new MyPostsViewModel
             {
                 Description = p.Description,
                 Id = p.Id,
-                Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(p.Image.Picture)),
+                Image = p.Image.ToImageString(),
                 PublishTime = p.PublishTime,
                 UserId = p.UserId,
                 User = p.User,
@@ -89,6 +96,11 @@
             if (!ModelState.IsValid)
             {
                 return BadRequest();
+            }
+
+            if(User.Identity.Name != model.Username)
+            {
+                return Unauthorized();
             }
 
             byte[] imageAsBytes = new byte[model.ProfilePicture.Length + 1];
