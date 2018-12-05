@@ -14,12 +14,14 @@
     public class HomeController : Controller
     {
         private readonly IPostsService posts;
+        private readonly IPicturesService pictures;
         private readonly UserManager<User> userManager;
 
-        public HomeController(IPostsService posts, UserManager<User> userManager)
+        public HomeController(IPostsService posts, UserManager<User> userManager, IPicturesService pictures)
         {
             this.posts = posts;
             this.userManager = userManager;
+            this.pictures = pictures;
         }
 
         public async Task<IActionResult> Index(int page = 1, int pageSize = 2)
@@ -31,7 +33,7 @@
 
             if (User.Identity.IsAuthenticated)
             {
-                var username = userManager.GetUserName(User);
+                var username = User.Identity.Name;
 
                 var postsData = await this.posts.AllPostsAsync(username, page, pageSize);
 
@@ -44,7 +46,7 @@
                     UserId = p.UserId,
                     User = p.User,
                     Likes = p.Likes,
-                    Username = User.Identity.Name,
+                    Username = username,
                     IsLiked = this.posts.IsLiked(username, p.Id)
                 });
 
@@ -52,7 +54,9 @@
                 {
                     AllPosts = postsModel,
                     CurrentPage = page,
-                    TotalPages = (int)Math.Ceiling(await this.posts.TotalExcludingUserAsync(username) / (double)pageSize)
+                    TotalPages = (int)Math.Ceiling(await this.posts.TotalExcludingUserAsync(username) / (double)pageSize),
+                    Username = username,
+                    ProfilePicture = await this.pictures.GetProfilePictureAsync(username)
                 });
             }
 

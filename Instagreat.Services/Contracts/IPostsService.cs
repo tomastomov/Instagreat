@@ -22,9 +22,9 @@
 
         Task<int> TotalExcludingUserAsync(string username);
 
-        Task<bool> AddLikeAsync(string username,int postId);
+        Task<bool> AddLikeAsync(string username,int id, string typeToLike);
 
-        Task<bool> RemoveLikeAsync(string username, int postId);
+        Task<bool> RemoveLikeAsync(string username, int id, string typeToLike);
         
         bool IsLiked(string username, int postId);
     }

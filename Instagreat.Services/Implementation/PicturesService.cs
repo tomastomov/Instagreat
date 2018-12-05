@@ -73,10 +73,8 @@
             {
                 return "No profile picture yet!";
             }
-
-            var imageAsString = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(image.Picture));
-
-            return imageAsString;
+            
+            return image.ToImageString();
         }
 
         public async Task<bool> SetProfilePictureAsync(byte[] pictureData, string username)

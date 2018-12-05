@@ -28,5 +28,7 @@
 
         public bool IsLiked { get; set; }
 
+        public User CurrentUser { get; set; }
+
     }
 }

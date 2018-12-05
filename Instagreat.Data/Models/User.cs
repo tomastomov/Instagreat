@@ -17,6 +17,8 @@
 
         public List<Comment> Comments { get; set; } = new List<Comment>();
 
+        public List<Reply> CommentReplies { get; set; } = new List<Reply>();
+
         public List<Post> Posts { get; set; } = new List<Post>();
 
         public bool IsActive { get; set; } = true;

@@ -12,5 +12,7 @@
 
         [Required]
         public int PostId { get; set; }
+
+        public string TypeToLike { get; set; }
     }
 }

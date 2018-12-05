@@ -35,6 +35,11 @@
                 .WithOne(p => p.User)
                 .HasForeignKey(u => u.UserId);
 
+            builder.Entity<User>()
+                .HasMany(u => u.CommentReplies)
+                .WithOne(cr => cr.Author)
+                .HasForeignKey(u => u.UserId);
+
             builder.Entity<Post>()
                 .HasMany(p => p.Comments)
                 .WithOne(c => c.Post)

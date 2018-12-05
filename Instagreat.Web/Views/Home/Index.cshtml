@@ -12,7 +12,11 @@
     {
         <h1 style="color:red;text-align:center">@TempData["InvalidComment"]</h1>
     }
-    <h1 style="text-align:center">Feed</h1>
+        <h1 style="text-align:center">
+            Welcome to Instagreat, @Model.Username
+            <img class="img-circle" src="@Model.ProfilePicture" height="120px" width="120px" />
+        </h1>
+    <h2 style="text-align:center">Feed</h2>
     @await Html.PartialAsync("_PostsListingPartial", Model)
 }
 else

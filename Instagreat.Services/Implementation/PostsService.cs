@@ -155,56 +155,86 @@
             
         }
 
-        public async Task<bool> AddLikeAsync(string username, int postId)
+        public async Task<bool> AddLikeAsync(string username, int id, string typeToLike)
         {
             var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            dynamic entity = null; 
 
             if(user == null)
             {
                 return false;
             }
 
-            var post = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+            switch (typeToLike)
+            {
+                case "like":
+                    entity = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == id);
+                    break;
+                case "comment":
+                    entity = await this.db.Comments.FirstOrDefaultAsync(c => c.Id == id);
+                    break;
+                case "reply":
+                    entity = await this.db.CommentReplies.FirstOrDefaultAsync(cr => cr.Id == id);
+                    break;
+                default:
+                    break;
+            }
 
-            if(post == null)
+            if(entity == null)
             {
                 return false;
             }
 
-            if (post.Likes.Contains(user))
+            if (entity.Likes.Contains(user))
             {
                 return false;
             }
 
-            post.Likes.Add(user);
+            entity.Likes.Add(user);
 
             await this.db.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<bool> RemoveLikeAsync(string username, int postId)
+        public async Task<bool> RemoveLikeAsync(string username, int id, string typeToLike)
         {
             var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            dynamic entity = null;
 
             if (user == null)
             {
                 return false;
             }
 
-            var post = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+            switch (typeToLike)
+            {
+                case "like":
+                    entity = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == id);
+                    break;
+                case "comment":
+                    entity = await this.db.Comments.FirstOrDefaultAsync(c => c.Id == id);
+                    break;
+                case "reply":
+                    entity = await this.db.CommentReplies.FirstOrDefaultAsync(cr => cr.Id == id);
+                    break;
+                default:
+                    break;
+            }
 
-            if (post == null)
+            if (entity == null)
             {
                 return false;
             }
 
-            if (!post.Likes.Contains(user))
+            if (!entity.Likes.Contains(user))
             {
                 return false;
             }
 
-            post.Likes.Remove(user);
+            entity.Likes.Remove(user);
 
             await this.db.SaveChangesAsync();
 

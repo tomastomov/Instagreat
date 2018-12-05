@@ -81,7 +81,8 @@
                 UserId = postsData.UserId,
                 Likes = postsData.Likes,
                 Username = postsData.User.UserName,
-                IsLiked = this.posts.IsLiked(User.Identity.Name,id)
+                IsLiked = this.posts.IsLiked(User.Identity.Name, id),
+                CurrentUser = await userManager.FindByNameAsync(User.Identity.Name)
             };
 
             return View(postModel);

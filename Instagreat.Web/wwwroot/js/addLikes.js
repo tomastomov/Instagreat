@@ -1,12 +1,13 @@
-﻿function like(username ,postId, isClicked) {
-    let likeButton = $(`#likeBtn${postId}`);
+﻿function like(username ,id, typeToLike) {
+    let likeButton = $(`#${typeToLike}Btn${id}`);
     let baseUrl = "https://localhost:44382/api/posts";
     let data = {
         'username': username,
-        'postId': postId
+        'postId': id,
+        'typeToLike': typeToLike
     };
-    let likesDiv = $(`#likes${postId}`);
-    
+    let likesDiv = $(`#${typeToLike}s${id}`);
+           
     if (!likeButton.hasClass('active')) {
         likeButton.addClass('active');
         

@@ -4,14 +4,16 @@ using Instagreat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Instagreat.Data.Migrations
 {
     [DbContext(typeof(InstagreatDbContext))]
-    partial class InstagreatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181205171650_CommentsAndRepliesLikes")]
+    partial class CommentsAndRepliesLikes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

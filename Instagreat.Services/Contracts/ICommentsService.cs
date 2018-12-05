@@ -11,5 +11,6 @@
         Task<bool> DeleteCommentAdminAsync(int commentId);
 
         Task<bool> DeleteCommentAsync(int commentId, string userId);
+        
     }
 }

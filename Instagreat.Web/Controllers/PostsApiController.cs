@@ -27,7 +27,7 @@
                 return BadRequest();
             }
 
-            var success = await this.posts.AddLikeAsync(model.Username, model.PostId);
+            var success = await this.posts.AddLikeAsync(model.Username, model.PostId, model.TypeToLike);
 
             if (!success)
             {
@@ -46,7 +46,7 @@
                 return BadRequest();
             }
 
-            var success = await this.posts.RemoveLikeAsync(model.Username, model.PostId);
+            var success = await this.posts.RemoveLikeAsync(model.Username, model.PostId, model.TypeToLike);
 
             if (!success)
             {
