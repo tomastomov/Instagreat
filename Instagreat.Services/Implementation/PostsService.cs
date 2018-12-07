@@ -158,8 +158,9 @@
         public async Task<bool> AddLikeAsync(string username, int id, string typeToLike)
         {
             var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
-
-            dynamic entity = null; 
+                        
+            dynamic entity = null;
+            dynamic userLike = null;
 
             if(user == null)
             {
@@ -170,28 +171,43 @@
             {
                 case "like":
                     entity = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == id);
+                    userLike = new UserPostLikes
+                    {
+                        UserId = user.Id,
+                        PostId = id
+                    };
                     break;
                 case "comment":
                     entity = await this.db.Comments.FirstOrDefaultAsync(c => c.Id == id);
+                    userLike = new UserCommentLikes
+                    {
+                        UserId = user.Id,
+                        CommentId = id
+                    };
                     break;
                 case "reply":
                     entity = await this.db.CommentReplies.FirstOrDefaultAsync(cr => cr.Id == id);
+                    userLike = new UserReplyLikes
+                    {
+                        UserId = user.Id,
+                        ReplyId = id
+                    };
                     break;
                 default:
                     break;
             }
-
+            
             if(entity == null)
             {
                 return false;
             }
 
-            if (entity.Likes.Contains(user))
+            if (entity.UserLikes.Contains(userLike))
             {
                 return false;
             }
 
-            entity.Likes.Add(user);
+            entity.UserLikes.Add(userLike);
 
             await this.db.SaveChangesAsync();
 
@@ -203,6 +219,7 @@
             var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
             dynamic entity = null;
+            dynamic userLike = null;
 
             if (user == null)
             {
@@ -213,15 +230,23 @@
             {
                 case "like":
                     entity = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == id);
+                    userLike = await this.db.PostLikes.Where(c => c.UserId == user.Id && c.PostId == id).FirstOrDefaultAsync();
                     break;
                 case "comment":
                     entity = await this.db.Comments.FirstOrDefaultAsync(c => c.Id == id);
+                    userLike = await this.db.CommentLikes.Where(c => c.UserId == user.Id && c.CommentId == id).FirstOrDefaultAsync();
                     break;
                 case "reply":
                     entity = await this.db.CommentReplies.FirstOrDefaultAsync(cr => cr.Id == id);
+                    userLike = await this.db.ReplyLikes.Where(r => r.UserId == user.Id && r.ReplyId == id).FirstOrDefaultAsync();
                     break;
                 default:
                     break;
+            }
+
+            if(user == null)
+            {
+                return false;
             }
 
             if (entity == null)
@@ -229,12 +254,12 @@
                 return false;
             }
 
-            if (!entity.Likes.Contains(user))
+            if (!entity.UserLikes.Contains(userLike))
             {
                 return false;
             }
 
-            entity.Likes.Remove(user);
+            entity.UserLikes.Remove(userLike);
 
             await this.db.SaveChangesAsync();
 
@@ -252,20 +277,16 @@
 
             var post = this.db.Posts.FirstOrDefault(p => p.Id == postId);
 
-            if (post == null)
-            {
-                return false;
-            }
+            var postLike = this.db.PostLikes.FirstOrDefault(p => p.UserId == user.Id && p.PostId == postId);
 
-            if (post.Likes.Contains(user))
+            if (post.UserLikes.Contains(postLike))
             {
                 return true;
             }
             else
             {
                 return false;
-            }
+            };
         }
-        
     }
 }

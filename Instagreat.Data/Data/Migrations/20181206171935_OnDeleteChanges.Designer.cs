@@ -4,14 +4,16 @@ using Instagreat.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Instagreat.Data.Migrations
 {
     [DbContext(typeof(InstagreatDbContext))]
-    partial class InstagreatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181206171935_OnDeleteChanges")]
+    partial class OnDeleteChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,6 +123,8 @@ namespace Instagreat.Data.Migrations
 
                     b.Property<string>("Biography");
 
+                    b.Property<int?>("CommentId");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
@@ -147,7 +151,11 @@ namespace Instagreat.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<int?>("PostId");
+
                     b.Property<int?>("ProfilePictureId");
+
+                    b.Property<int?>("ReplyId");
 
                     b.Property<string>("SecurityStamp");
 
@@ -158,6 +166,8 @@ namespace Instagreat.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CommentId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -166,48 +176,13 @@ namespace Instagreat.Data.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("PostId");
+
                     b.HasIndex("ProfilePictureId");
 
+                    b.HasIndex("ReplyId");
+
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("Instagreat.Data.Models.UserCommentLikes", b =>
-                {
-                    b.Property<int>("CommentId");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("CommentId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CommentLikes");
-                });
-
-            modelBuilder.Entity("Instagreat.Data.Models.UserPostLikes", b =>
-                {
-                    b.Property<int>("PostId");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("PostId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PostLikes");
-                });
-
-            modelBuilder.Entity("Instagreat.Data.Models.UserReplyLikes", b =>
-                {
-                    b.Property<int>("ReplyId");
-
-                    b.Property<string>("UserId");
-
-                    b.HasKey("ReplyId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ReplyLikes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -364,53 +339,27 @@ namespace Instagreat.Data.Migrations
 
                     b.HasOne("Instagreat.Data.Models.User", "Author")
                         .WithMany("CommentReplies")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Instagreat.Data.Models.User", b =>
                 {
+                    b.HasOne("Instagreat.Data.Models.Comment")
+                        .WithMany("Likes")
+                        .HasForeignKey("CommentId");
+
+                    b.HasOne("Instagreat.Data.Models.Post")
+                        .WithMany("Likes")
+                        .HasForeignKey("PostId");
+
                     b.HasOne("Instagreat.Data.Models.Image", "ProfilePicture")
                         .WithMany()
                         .HasForeignKey("ProfilePictureId");
-                });
 
-            modelBuilder.Entity("Instagreat.Data.Models.UserCommentLikes", b =>
-                {
-                    b.HasOne("Instagreat.Data.Models.Comment", "Comment")
-                        .WithMany("UserLikes")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Instagreat.Data.Models.User", "User")
-                        .WithMany("CommentLikes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Instagreat.Data.Models.UserPostLikes", b =>
-                {
-                    b.HasOne("Instagreat.Data.Models.Post", "Post")
-                        .WithMany("UserLikes")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Instagreat.Data.Models.User", "User")
-                        .WithMany("PostLikes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Instagreat.Data.Models.UserReplyLikes", b =>
-                {
-                    b.HasOne("Instagreat.Data.Models.Reply", "Reply")
-                        .WithMany("UserLikes")
-                        .HasForeignKey("ReplyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Instagreat.Data.Models.User", "User")
-                        .WithMany("ReplyLikes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("Instagreat.Data.Models.Reply")
+                        .WithMany("Likes")
+                        .HasForeignKey("ReplyId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

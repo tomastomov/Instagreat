@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Remove="Data\Migrations\20181204215615_CascadeDelete.cs" />
+    <Compile Remove="Data\Migrations\20181206185348_LikesRelationChanged.cs" />
   </ItemGroup>
 
   <ItemGroup>

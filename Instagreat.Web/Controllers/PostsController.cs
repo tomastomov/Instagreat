@@ -79,7 +79,7 @@
                 PublishTime = postsData.PublishTime,
                 Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(postsData.Image.Picture)),
                 UserId = postsData.UserId,
-                Likes = postsData.Likes,
+                Likes = postsData.UserLikes,
                 Username = postsData.User.UserName,
                 IsLiked = this.posts.IsLiked(User.Identity.Name, id),
                 CurrentUser = await userManager.FindByNameAsync(User.Identity.Name)

@@ -6,6 +6,7 @@
     using Data.Models;
     using Contracts;
     using Microsoft.EntityFrameworkCore;
+    using System;
 
     public class CommentsService : ICommentsService
     {
@@ -118,12 +119,74 @@
             {
                 return false;
             }
-
+            
             this.db.Comments.Remove(comment);
 
             await this.db.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<bool> AddCommentAsync(string content, string username, int postId)
+        {
+            var user = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
+
+            if(user == null)
+            {
+                return false;
+            }
+
+            var post = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+
+            if(post == null)
+            {
+                return false;
+            }
+
+            if(content.Length <= 0)
+            {
+                return false;
+            }
+
+            var comment = new Comment
+            {
+                Content = content,
+                UserId = user,
+                PostId = post.Id
+            };
+
+            await this.db.Comments.AddAsync(comment);
+
+            post.Comments.Add(comment);
+
+            await this.db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> IsLikedAsync(string userId, int id, string typeToCheck)
+        {
+            if(typeToCheck == "comment")
+            {
+                var commentLike = await this.db.CommentLikes.FirstOrDefaultAsync(c => c.UserId == userId && c.CommentId == id);
+
+                if (commentLike == null)
+                    return false;
+
+                else
+                    return true;
+            }
+            else
+            {
+                var commentReply = await this.db.ReplyLikes.FirstOrDefaultAsync(r => r.UserId == userId && r.ReplyId == id);
+
+                if (commentReply == null)
+                    return false;
+
+                else
+                    return true;
+            }
+            
         }
     }
 }

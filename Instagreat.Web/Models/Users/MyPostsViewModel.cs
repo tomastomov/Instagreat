@@ -24,7 +24,7 @@
 
         public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
 
-        public IEnumerable<User> Likes { get; set; } = new List<User>();
+        public IEnumerable<UserPostLikes> Likes { get; set; } = new List<UserPostLikes>();
 
         public bool IsLiked { get; set; }
 

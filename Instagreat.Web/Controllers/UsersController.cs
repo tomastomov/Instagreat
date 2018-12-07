@@ -38,6 +38,7 @@
             }
 
             var isActive = await this.users.IsUserActive(username);
+            var currentUser = await this.userManager.FindByNameAsync(User.Identity.Name);
 
             if (!isActive)
             {
@@ -55,8 +56,9 @@
                 UserId = p.UserId,
                 User = p.User,
                 Username = username,
-                Likes = p.Likes,
-                IsLiked = this.posts.IsLiked(username, p.Id)
+                Likes = p.UserLikes,
+                IsLiked = this.posts.IsLiked(username, p.Id),
+                CurrentUser = currentUser
             });
             
             return View(new AllPostsViewModel

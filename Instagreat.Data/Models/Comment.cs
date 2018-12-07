@@ -25,7 +25,7 @@
 
         public List<Reply> CommentReplies { get; set; } = new List<Reply>();
 
-        public List<User> Likes { get; set; } = new List<User>();
+        public List<UserCommentLikes> UserLikes { get; set; } = new List<UserCommentLikes>();
 
     }
 }

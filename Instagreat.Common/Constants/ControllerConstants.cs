@@ -3,6 +3,5 @@
     public static class ControllerConstants
     {
         public const string Index = "Index";
-        public const string Home = "Home";
-    }
+        public const string Home = "Home";    }
 }

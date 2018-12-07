@@ -59,11 +59,11 @@
             {
                 return BadRequest();
             }
-
+                        
             TempData["SuccessfulComment"] = "You successfully replied to the comment!";
 
             return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-
+;
         }
 
         [HttpPost]

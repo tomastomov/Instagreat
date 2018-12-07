@@ -21,7 +21,7 @@
 
         public Comment Comment { get; set; }
 
-        public List<User> Likes { get; set; } = new List<User>();
+        public List<UserReplyLikes> UserLikes { get; set; } = new List<UserReplyLikes>();
 
     }
 }

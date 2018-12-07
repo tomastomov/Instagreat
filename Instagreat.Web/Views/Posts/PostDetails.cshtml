@@ -1,4 +1,5 @@
 ﻿@model MyPostsViewModel
+@inject ICommentsService commentsService
 @{
     ViewData["Title"] = "Post details";
 }
@@ -28,15 +29,16 @@
     @foreach (var comment in Model.Comments)
     {
         var commentAuthor = comment.Author.UserName;
-        var commentActive = comment.Likes.Contains(Model.CurrentUser) ? "active" : string.Empty;
-    <div class="row button" style="align-content:center">
+        var commentActive = await commentsService.IsLikedAsync(Model.CurrentUser.Id, comment.Id, "comment") ? "active" : string.Empty;
+    <div id="commentsDiv" class="row button" style="align-content:center">
         <h3 class="col-md-4"><a asp-controller="Users" asp-action="Profile" asp-route-username="@commentAuthor"><img class="img-rounded" src="@comment.Author.ProfilePicture.ToImageString()" height="48px" width="48px" /> @commentAuthor</a>: @comment.Content
         </h3>
 
-        <h3 id="comments@(+comment.Id)" class="col-md-12">@comment.Likes.Count()</h3> <h4 class="col-md-12">Likes</h4>
+        <h3 id="comments@(+comment.Id)" class="col-md-12">@comment.UserLikes.Count()</h3> <h4 class="col-md-12">Likes</h4>
 
         <div class="row button">
-            <button id="commentBtn@(+comment.Id)" onclick="like(@($"'{User.Identity.Name}'"),@comment.Id, @("'comment'"))" class="btn btn-default col-md-1 @commentActive">Like</button>
+            <button id="commentBtn@(+comment.Id)" onclick="like(@($"'{User.Identity.Name}'"),@comment.Id, @("'comment'"))" class="btn btn-default col-md-1 @commentActive">Like
+            </button>
             <button id="reply" onclick="showReplyTextBox(@comment.Id)" class="btn btn-default col-md-1">Reply</button>
             @if (User.IsInRole(RolesConstants.ADMINISTRATOR_ROLE))
             {
@@ -54,9 +56,9 @@
         @foreach (var reply in comment.CommentReplies)
         {
             var replyAuthor = reply.Author.UserName;
-            var replyLiked = reply.Likes.Contains(Model.CurrentUser) ? "active" : string.Empty;
+            var replyLiked = await commentsService.IsLikedAsync(Model.CurrentUser.Id, reply.Id, "reply") ? "active" : string.Empty;
             <h3 class="col-md-6 replyForComment"><a asp-controller="Users" asp-action="Profile" asp-route-username="@replyAuthor"><img src="@reply.Author.ProfilePicture.ToImageString()" width="48px" height="48px" class="img-rounded" /> @replyAuthor</a>: @reply.Content</h3>
-            <h3 id="replys@(+reply.Id)" class="col-md-12">@reply.Likes.Count()</h3> <h4 class="col-md-12">Likes</h4>
+            <h3 id="replys@(+reply.Id)" class="col-md-12">@reply.UserLikes.Count()</h3> <h4 class="col-md-12">Likes</h4>
             <button id="replyBtn@(+reply.Id)" onclick="like(@($"'{User.Identity.Name}'"),@reply.Id, @("'reply'"))" class="btn btn-default col-md-1 @replyLiked">Like</button>
         }
         <div id="replyTextBox@(+comment.Id)" hidden class="row" style="display:none">

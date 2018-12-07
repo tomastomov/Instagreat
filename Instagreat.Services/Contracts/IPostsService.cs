@@ -27,5 +27,6 @@
         Task<bool> RemoveLikeAsync(string username, int id, string typeToLike);
         
         bool IsLiked(string username, int postId);
+        
     }
 }

@@ -37,6 +37,8 @@
 
                 var postsData = await this.posts.AllPostsAsync(username, page, pageSize);
 
+                var currentUser = await this.userManager.FindByNameAsync(username);
+
                 var postsModel = postsData.Select(p => new MyPostsViewModel
                 {
                     Id = p.Id,
@@ -45,9 +47,10 @@
                     PublishTime = p.PublishTime,
                     UserId = p.UserId,
                     User = p.User,
-                    Likes = p.Likes,
+                    Likes = p.UserLikes,
                     Username = username,
-                    IsLiked = this.posts.IsLiked(username, p.Id)
+                    IsLiked = this.posts.IsLiked(username, p.Id),
+                    CurrentUser = currentUser
                 });
 
                 return View(new AllPostsViewModel

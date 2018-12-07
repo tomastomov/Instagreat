@@ -11,6 +11,9 @@
         Task<bool> DeleteCommentAdminAsync(int commentId);
 
         Task<bool> DeleteCommentAsync(int commentId, string userId);
-        
+
+        Task<bool> AddCommentAsync(string content, string username, int postId);
+
+        Task<bool> IsLikedAsync(string userId, int id, string typeToCheck);
     }
 }
