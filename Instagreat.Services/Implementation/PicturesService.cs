@@ -46,7 +46,7 @@
             return true;
         }
 
-        public async Task<byte[]> GetDefaultPicture(int id = 6008)
+        public async Task<byte[]> GetDefaultPictureAsync(int id = 6008)
         {
             var image = await this.db.Images.FirstOrDefaultAsync(i => i.Id == id);
 
@@ -57,7 +57,7 @@
 
             return image.Picture;
         }
-
+        
         public async Task<string> GetProfilePictureAsync(string username)
         {
             var user = await this.db.Users.Include(u => u.ProfilePicture).FirstOrDefaultAsync(u => u.UserName == username);

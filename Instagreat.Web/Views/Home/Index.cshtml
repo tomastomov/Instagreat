@@ -17,6 +17,7 @@
             <img class="img-circle" src="@Model.ProfilePicture" height="120px" width="120px" />
         </h1>
     <h2 style="text-align:center">Feed</h2>
+    
     @await Html.PartialAsync("_PostsListingPartial", Model)
 }
 else

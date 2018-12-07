@@ -1,14 +1,20 @@
-﻿function comment(username, postId, profilePicture) {
+﻿function comment(username, id, profilePicture, typeToAdd) {
     let baseUrl = "https://localhost:44382/"
-    let comment = $(`#addComment${postId}`).val();
+    let textBox = $(`#add${typeToAdd}${id}`);
+    let comment = textBox.val();
     let data = {
         'comment': comment,
         'username': username,
-        'postId': postId
+        'id': id,
     };
-    let commentsDiv = $('#commentsDiv');
+    if (typeToAdd === "Reply") {
+        baseUrl = baseUrl + "api/comments/AddReply";
+    }
+    else {
+        baseUrl = baseUrl + "api/comments/AddComment";
+    }
     $.ajax({
-        url: baseUrl + "api/comments/AddComment",
+        url: baseUrl,
         method: "POST",
         headers: {
             RequestVerificationToken:
@@ -18,18 +24,27 @@
         },
         data: JSON.stringify(data),
         success: function () {
-            let h3 = $('<h3>').addClass('col-md-4');
+            let div = $('<div>').addClass('row button');
+            let h3 = $('<h3>');
+            if (typeToAdd === 'reply') {
+                h3.addClass('col-md-6 replyForComment');
+            }
+            else {
+                h3.addClass('col-md-4');
+            }
             let aTag = $('<a>').attr('href', baseUrl + `users/Profile/${username}`)
             aTag.text(username);
             let image = '<img src=\"' + profilePicture + '\" width="48px" height="48px" class="img-rounded"/>';
             h3.append(image);
             h3.append(aTag);
             h3.append(' : ' + comment);
-            console.log(h3);
-            commentsDiv.prepend(h3);
+            textBox.val(' ');
+            $(`#${typeToAdd.toLowerCase()}TextBox${id}`).hide();
+            div.append(h3);
+            div.appendTo($('body'));
         },
         error: function (msg) {
             console.dir(msg);
-        }
+        }   
     });
 }

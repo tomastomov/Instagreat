@@ -7,7 +7,8 @@
     <button id="comment" onclick="showCommentTextBox(@Model.Id)" class="btn btn-default col-md-2">Comment</button>
 </div>
 <div id="commentTextBox@(+Model.Id)" hidden class="row" style="display:none">
-        <textarea asp-for="Comment" id="addComment@(+Model.Id)" style="display:none" class="row button col-md-2">
+        <textarea id="addComment@(+Model.Id)" style="display:none" class="row button col-md-2">
             </textarea>
-        <button class="btn btn-primary" onclick="comment(@($"'{User.Identity.Name}'"), @Model.Id, @($"'{Model.CurrentUser.ProfilePicture.ToImageString()}'") )">Post</button>
+        <button class="btn btn-primary" onclick="comment(@($"'{User.Identity.Name}'"), @Model.Id,
+                @($"'{Model.CurrentUser.ProfilePicture.ToImageString()}'"), @("'Comment'"))">Post</button>
 </div>

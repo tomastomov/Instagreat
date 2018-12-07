@@ -12,8 +12,8 @@
         [MinLength(ValidationConstants.MIN_USERNAME_LENGTH)]
         [MaxLength(ValidationConstants.MAX_USERNAME_LENGTH)]
         public string Username { get; set; }
-
+        
         [Required]
-        public int PostId { get; set; }
+        public int Id { get; set; }
     }
 }

@@ -71,7 +71,7 @@
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var profilePicture = await this.pictures.GetDefaultPicture();
+                var profilePicture = await this.pictures.GetDefaultPictureAsync();
 
                 var user = new User { UserName = Input.Username, Email = Input.Email, IsActive = true};
                 var result = await _userManager.CreateAsync(user, Input.Password);

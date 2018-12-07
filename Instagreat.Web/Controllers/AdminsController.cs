@@ -104,5 +104,22 @@
 
             return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
         }
+
+        public async Task<IActionResult> DeleteReplyAsync(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var success = await this.comments.DeleteReplyAdminAsync(id);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
+        }
     }
 }

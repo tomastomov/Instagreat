@@ -70,6 +70,9 @@
         public async Task<IActionResult> PostDetails(int id)
         {
             var postsData = await this.posts.DetailsAsync(id);
+            var currentUsername = User.Identity.Name;
+            var currentUser = await this.userManager.FindByNameAsync(currentUsername);
+            var profilePicture = await this.pictures.GetProfilePictureAsync(currentUsername);
 
             var postModel = new MyPostsViewModel
             {
@@ -77,12 +80,12 @@
                 Description = postsData.Description,
                 Comments = postsData.Comments,
                 PublishTime = postsData.PublishTime,
-                Image = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(postsData.Image.Picture)),
+                Image = postsData.Image.ToImageString(),
                 UserId = postsData.UserId,
                 Likes = postsData.UserLikes,
                 Username = postsData.User.UserName,
-                IsLiked = this.posts.IsLiked(User.Identity.Name, id),
-                CurrentUser = await userManager.FindByNameAsync(User.Identity.Name)
+                IsLiked = this.posts.IsLiked(currentUsername, id),
+                CurrentUser = currentUser
             };
 
             return View(postModel);

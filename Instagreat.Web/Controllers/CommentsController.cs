@@ -19,53 +19,7 @@
             this.comments = comments;
             this.userManager = userManager;
         }
-
-        [HttpPost]
-        [Route(nameof(Comment) + "/{id}")]
-        public async Task<IActionResult> Comment(CommentFormModel model, int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["InvalidComment"] = "Invalid Comment!";
-                return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-            }
-
-            var success = await this.comments.CreateCommentAsync(model.Comment, userManager.GetUserName(User), id);
-
-            if (!success)
-            {
-                return BadRequest();
-            }
-
-            TempData["SuccessfulComment"] = "You successfully commented on the post!";
-
-            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-
-        }
-
-        [HttpPost]
-        [Route(nameof(Reply) + "/{commentId}")]
-        public async Task<IActionResult> Reply(CommentFormModel model, int commentId)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["InvalidComment"] = "Invalid Comment!";
-                return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-            }
-
-            var success = await this.comments.ReplyToCommentAsync(model.Comment, userManager.GetUserName(User), commentId);
-
-            if (!success)
-            {
-                return BadRequest();
-            }
-                        
-            TempData["SuccessfulComment"] = "You successfully replied to the comment!";
-
-            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
-;
-        }
-
+        
         [HttpPost]
         [Route(nameof(DeleteComment) + "/{commentId}")]
         public async Task<IActionResult> DeleteComment(int commentId, string userId)
@@ -76,6 +30,25 @@
             }
 
             var success = await this.comments.DeleteCommentAsync(commentId, userId);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
+        }
+
+        [Route(nameof(DeleteReply) + "/{replyId}")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteReply(int replyId, string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var success = await this.comments.DeleteReplyAsync(replyId, userId);
 
             if (!success)
             {

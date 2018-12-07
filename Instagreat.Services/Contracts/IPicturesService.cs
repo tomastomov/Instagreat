@@ -12,7 +12,7 @@
 
         Task<bool> SetProfilePictureAsync(byte[] pictureData, string username);
 
-        Task<byte[]> GetDefaultPicture(int id = 6008);
-        
+        Task<byte[]> GetDefaultPictureAsync(int id = 6008);
+                
     }
 }
