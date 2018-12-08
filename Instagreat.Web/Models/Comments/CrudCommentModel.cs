@@ -6,6 +6,8 @@
     public class CrudCommentModel
     {
         [Required]
+        [MinLength(ValidationConstants.MIN_COMMENT_LENGTH)]
+        [MaxLength(ValidationConstants.MAX_COMMENT_LENGTH)]
         public string Comment { get; set; }
 
         [Required]

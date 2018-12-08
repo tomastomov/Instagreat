@@ -42,9 +42,12 @@
             $(`#${typeToAdd.toLowerCase()}TextBox${id}`).hide();
             div.append(h3);
             div.appendTo($('body'));
+            notification('Successfully commented!', 'info', 'glyphicon glyphicon-comment');
+            
         },
         error: function (msg) {
             console.dir(msg);
+            notification('Your comment didnt meet the requirements.', 'danger', 'glyphicon glyphicon-remove');
         }   
     });
 }

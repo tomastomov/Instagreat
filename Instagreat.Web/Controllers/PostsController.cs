@@ -62,6 +62,13 @@
 
             var successUploadPost = await this.posts.CreatePostAsync(model.Description, imageAsBytes, userManager.GetUserName(User));
 
+            if (!successUploadPost)
+            {
+                return BadRequest();
+            }
+
+            TempData["Success"] = "Post created!";
+
             return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
 
         }

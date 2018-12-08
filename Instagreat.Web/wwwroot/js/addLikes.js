@@ -24,6 +24,7 @@
             success: function () {
                 let likesText = likesDiv.text();
                 likesDiv.text(`${+likesText + 1}`)
+                notification('Successfully liked!', 'info', 'glyphicon glyphicon-thumbs-up');
             },
             error: function (msg) {
                 console.dir(msg);
@@ -42,9 +43,10 @@
                 'Content-Type': "application/json"
             },
             data: JSON.stringify(data),
-            success: function (result) {
+            success: function () {
                 let likesText = likesDiv.text();
-                likesDiv.text(`${+likesText - 1}`)
+                likesDiv.text(`${+likesText - 1}`);
+                notification('Successfully disliked!', 'info', 'glyphicon glyphicon-thumbs-up');
             },
             error: function (msg) {
                 console.dir(msg);

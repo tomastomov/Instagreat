@@ -4,13 +4,9 @@
 }
 @if (User.Identity.IsAuthenticated)
 {
-    if (TempData["SuccessfulComment"] != null)
+    if (TempData["Success"] != null)
     {
-        <h1 style="color:green;text-align:center">@TempData["SuccessfulComment"]</h1>
-    }
-    else if (TempData["InvalidComment"] != null)
-    {
-        <h1 style="color:red;text-align:center">@TempData["InvalidComment"]</h1>
+        <h1 style="color:green;text-align:center">@TempData["Success"]</h1>
     }
         <h1 style="text-align:center">
             Welcome, @Model.Username
