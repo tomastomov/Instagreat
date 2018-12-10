@@ -51,7 +51,7 @@
                 throw new InvalidOperationException($"No user with id: {userId} found!");
             }
 
-            var posts = await this.db.Posts.OrderByDescending(p => p.PublishTime).Where(p => p.UserId == userId).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>(mapper.ConfigurationProvider).ToListAsync();
+            var posts = await this.db.Posts.Include(p => p.User).ThenInclude(p => p.ProfilePicture).OrderByDescending(p => p.PublishTime).Where(p => p.UserId == userId).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>(mapper.ConfigurationProvider).ToListAsync();
 
             return posts;
         }
@@ -184,42 +184,58 @@
             {
                 case "like":
                     entity = await this.db.Posts.FirstOrDefaultAsync(p => p.Id == id);
-                    userLike = new UserPostLikes
+                    userLike = await this.db.PostLikes.Where(pl => pl.UserId == user.Id && pl.PostId == id).FirstOrDefaultAsync();
+
+                    if (userLike != null)
+                        return false;
+                    else
                     {
-                        UserId = user.Id,
-                        PostId = id
-                    };
+                        userLike = new UserPostLikes
+                        {
+                            UserId = user.Id,
+                            PostId = id
+                        };
+                    }
                     break;
                 case "comment":
                     entity = await this.db.Comments.FirstOrDefaultAsync(c => c.Id == id);
-                    userLike = new UserCommentLikes
+                    userLike = await this.db.CommentLikes.Where(pl => pl.UserId == user.Id && pl.CommentId == id).FirstOrDefaultAsync();
+
+                    if (userLike != null)
+                        return false;
+                    else
                     {
-                        UserId = user.Id,
-                        CommentId = id
-                    };
+                        userLike = new UserCommentLikes
+                        {
+                            UserId = user.Id,
+                            CommentId = id
+                        };
+                    }
                     break;
                 case "reply":
                     entity = await this.db.CommentReplies.FirstOrDefaultAsync(cr => cr.Id == id);
-                    userLike = new UserReplyLikes
+                    userLike = await this.db.ReplyLikes.Where(pl => pl.UserId == user.Id && pl.ReplyId == id).FirstOrDefaultAsync();
+
+                    if (userLike != null)
+                        return false;
+                    else
                     {
-                        UserId = user.Id,
-                        ReplyId = id
-                    };
+                        userLike = new UserReplyLikes
+                        {
+                            UserId = user.Id,
+                            ReplyId = id
+                        };
+                    }
                     break;
                 default:
-                    break;
+                    return false;
             }
             
             if(entity == null)
             {
                 return false;
             }
-
-            if (entity.UserLikes.Contains(userLike))
-            {
-                return false;
-            }
-
+            
             entity.UserLikes.Add(userLike);
 
             await this.db.SaveChangesAsync();
@@ -254,7 +270,7 @@
                     userLike = await this.db.ReplyLikes.Where(r => r.UserId == user.Id && r.ReplyId == id).FirstOrDefaultAsync();
                     break;
                 default:
-                    break;
+                    return false;
             }
 
             if(user == null)
@@ -267,11 +283,11 @@
                 return false;
             }
 
-            if (!entity.UserLikes.Contains(userLike))
+            if(userLike == null)
             {
                 return false;
             }
-
+            
             entity.UserLikes.Remove(userLike);
 
             await this.db.SaveChangesAsync();

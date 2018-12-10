@@ -24,7 +24,7 @@
 
         public async Task<bool> AddBiographyAsync(string biography, string username)
         {
-            if(biography.Length <= 0)
+            if(biography.Length <= 0 || string.IsNullOrWhiteSpace(biography))
             {
                 return false;
             }
@@ -114,7 +114,7 @@
             return user.Biography?.ToString();
         }
 
-        public async Task<bool> IsUserActive(string username)
+        public async Task<bool> IsUserActiveAsync(string username)
         {
             var user = await this.db.Users.FirstOrDefaultAsync(u => u.UserName == username);
 

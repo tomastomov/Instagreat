@@ -79,7 +79,7 @@
             var postsData = await this.posts.DetailsAsync(id);
             var currentUsername = User.Identity.Name;
             var currentUser = await this.userManager.FindByNameAsync(currentUsername);
-            var profilePicture = await this.pictures.GetProfilePictureAsync(currentUsername);
+            await this.pictures.GetProfilePictureAsync(currentUsername);
 
             var postModel = new MyPostsViewModel
             {

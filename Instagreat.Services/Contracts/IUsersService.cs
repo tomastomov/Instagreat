@@ -16,7 +16,7 @@
 
         Task<bool> ActivateUserAsync(string id);
 
-        Task<bool> IsUserActive(string username);
+        Task<bool> IsUserActiveAsync(string username);
 
     }
 }

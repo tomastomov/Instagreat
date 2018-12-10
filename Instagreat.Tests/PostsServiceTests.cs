@@ -87,6 +87,8 @@
         //}
 
         //CreatePostAsync Tests
+        //CreatePost Tests
+
         [Fact]
         public async Task CreatePostShouldReturnTrueIfAllDataIsValid()
         {
@@ -541,6 +543,355 @@
             var postsService = new PostsService(this.db, null);
 
             var result = await postsService.DeletePostAdminAsync(2);
+
+            Assert.False(result);
+        }
+
+        //AddLikeAsync Tests
+
+         //For Like on a post
+        [Fact]
+        public async Task AddLikeShouldReturnTrueIfAllDataIsValidForAPost()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+            
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.AddLikeAsync("Gosho", 1, "like");
+
+            Assert.True(result);
+        }
+
+        //For like on a comment
+        [Fact]
+        public async Task AddLikeShouldReturnIfAllDataIsValidForAComment()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var comment = new Comment
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Comments.AddAsync(comment);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.AddLikeAsync("Gosho", 1, "comment");
+
+            Assert.True(result);
+        }
+
+        //For like on a reply
+        [Fact]
+        public async Task AddLikeShouldReturnIfAllDataIsValidForAReply()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var reply = new Reply
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.CommentReplies.AddAsync(reply);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.AddLikeAsync("Gosho", 1, "reply");
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task AddLikeShouldReturnFalseIfUsernameIsNotValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.AddLikeAsync("Invalid", 1, "like");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task AddLikeShouldReturnFalseIfIdIsNotValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.AddLikeAsync("Gosho", 2, "like");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task AddLikeShouldReturnFalseIfTypeToLikeIsNotValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.AddLikeAsync("Gosho", 1, "invalid");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task AddLikeShouldReturnFalseIfThePostIsAlreadyLikedByTheUser()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+            
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.AddLikeAsync("Gosho", 1, "like");
+
+            var finalResult = await postsService.AddLikeAsync("Gosho", 1, "like");
+
+            Assert.False(finalResult);
+        }
+
+        //RemoveLikeAsync Tests
+
+        [Fact]
+        public async Task RemoveLikeShouldReturnTrueIfAllDataIsValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            var postLike = new UserPostLikes
+            {
+                UserId = "1",
+                PostId = 1
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.PostLikes.AddAsync(postLike);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.RemoveLikeAsync("Gosho", 1, "like");
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task RemoveLikeShouldReturnFalseIfUsernameIsNotValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            var postLike = new UserPostLikes
+            {
+                UserId = "1",
+                PostId = 1
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.PostLikes.AddAsync(postLike);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.RemoveLikeAsync("Invalid", 1, "like");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task RemoveLikeShouldReturnFalseIfTheIdIsNotValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            var postLike = new UserPostLikes
+            {
+                UserId = "1",
+                PostId = 1
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.PostLikes.AddAsync(postLike);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.RemoveLikeAsync("Gosho", 2, "like");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task RemoveLikeShouldReturnFalseIfTypeToLikeIsNotValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            var postLike = new UserPostLikes
+            {
+                UserId = "1",
+                PostId = 1
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.PostLikes.AddAsync(postLike);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.RemoveLikeAsync("Gosho", 1, "invalid");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task RemoveLikeShouldReturnFalseIfThePostIsNotLiked()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+            
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, null);
+
+            var result = await postsService.RemoveLikeAsync("Gosho", 1, "like");
 
             Assert.False(result);
         }

@@ -37,8 +37,9 @@
                 page = 1;
             }
 
-            var isActive = await this.users.IsUserActive(username);
+            var isActive = await this.users.IsUserActiveAsync(username);
             var currentUser = await this.userManager.FindByNameAsync(User.Identity.Name);
+            await this.pictures.GetProfilePictureAsync(currentUser.UserName);
 
             if (!isActive)
             {
@@ -68,6 +69,7 @@
                 TotalPages = (int)Math.Ceiling(await this.posts.TotalPerUserAsync(username) / (double)PageSize),
                 Username = username,
                 Biography = await this.users.GetUserBiographyAsync(username),
+                
                 ProfilePicture = await this.pictures.GetProfilePictureAsync(username),
             });
         }
