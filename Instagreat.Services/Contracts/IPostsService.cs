@@ -1,5 +1,6 @@
 ﻿namespace Instagreat.Services.Contracts
 {
+    using Data.Models;
     using Instagreat.Services.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;

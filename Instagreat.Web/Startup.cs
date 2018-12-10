@@ -40,7 +40,7 @@
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<InstagreatDbContext>();
             
-            services.AddDomainServices();
+            services.AddDomainServices();   
 
             services.AddAutoMapper();
 

@@ -4,20 +4,23 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper;
     using AutoMapper.QueryableExtensions;
     using Contracts;
     using Data;
     using Data.Models;
-    using Instagreat.Services.Models;
+    using Services.Models;
     using Microsoft.EntityFrameworkCore;
 
     public class PostsService : IPostsService
     {
         private readonly InstagreatDbContext db;
+        private readonly IMapper mapper;
 
-        public PostsService(InstagreatDbContext db)
+        public PostsService(InstagreatDbContext db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper;
         }
 
         public async Task<IEnumerable<AllPostsServiceModel>> AllPostsAsync(string username, int page = 1, int pageSize = 3)
@@ -29,7 +32,7 @@
                 throw new InvalidOperationException($"No user found with name: {username}");
             }
 
-            var posts = await this.db.Posts.Include(p => p.User).OrderByDescending(p => p.PublishTime).Where(p => p.UserId != userId && p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>().ToListAsync();
+            var posts = await this.db.Posts.Include(p => p.User).OrderByDescending(p => p.PublishTime).Where(p => p.UserId != userId && p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>(mapper.ConfigurationProvider).ToListAsync();
 
             if (posts == null)
             {
@@ -48,14 +51,14 @@
                 throw new InvalidOperationException($"No user with id: {userId} found!");
             }
 
-            var posts = await this.db.Posts.OrderByDescending(p => p.PublishTime).Where(p => p.UserId == userId).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>().ToListAsync();
+            var posts = await this.db.Posts.OrderByDescending(p => p.PublishTime).Where(p => p.UserId == userId).Skip((page - 1) * pageSize).Take(pageSize).ProjectTo<AllPostsServiceModel>(mapper.ConfigurationProvider).ToListAsync();
 
             return posts;
         }
 
         public async Task<bool> CreatePostAsync(string description, byte[] imageData, string username)
         {
-            if(description.Length <= 0 || imageData.Length <= 0)
+            if(description.Length <= 0 || imageData.Length <= 0 || description.Length > 200 || string.IsNullOrWhiteSpace(description))
             {
                 return false;
             }
@@ -87,7 +90,7 @@
 
         public async Task<AllPostsServiceModel> DetailsAsync(int id)
         {
-            var post = await this.db.Posts.Where(p => p.Id == id).Include(p => p.Comments).ProjectTo<AllPostsServiceModel>().FirstOrDefaultAsync();
+            var post = await this.db.Posts.Where(p => p.Id == id).Include(p => p.Comments).ProjectTo<AllPostsServiceModel>(mapper.ConfigurationProvider).FirstOrDefaultAsync();
             var replies = await this.db.Comments.Include(c => c.Author).ThenInclude(c => c.ProfilePicture).Where(p => p.PostId == id).ToListAsync();
             var commentReplies = await this.db.CommentReplies.Include(c => c.Author).ThenInclude(c => c.ProfilePicture).Where(p => replies.Contains(p.Comment)).ToListAsync();
 
@@ -103,6 +106,11 @@
         {
             var userId = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
 
+            if(userId == null)
+            {
+                return 0;
+            }
+
             var postsCount = this.db.Posts.Where(u => u.UserId == userId).Count();
 
             return postsCount;
@@ -111,6 +119,11 @@
         public async Task<int> TotalExcludingUserAsync(string username)
         {
             var userId = await this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefaultAsync();
+
+            if(userId == null)
+            {
+                return 0;
+            }
 
             var postsCount = this.db.Posts.Where(p => p.UserId != userId && p.IsActive).Count();
 
@@ -276,6 +289,11 @@
             }
 
             var post = this.db.Posts.FirstOrDefault(p => p.Id == postId);
+
+            if(post == null)
+            {
+                return false;
+            }
 
             var postLike = this.db.PostLikes.FirstOrDefault(p => p.UserId == user.Id && p.PostId == postId);
 

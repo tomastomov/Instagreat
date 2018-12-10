@@ -6,17 +6,20 @@
     using Data;
     using Microsoft.EntityFrameworkCore;
     using System;
-    using Instagreat.Services.Models.Users;
+    using Models.Users;
     using System.Collections.Generic;
     using AutoMapper.QueryableExtensions;
+    using AutoMapper;
 
     public class UsersService : IUsersService
     {
         private readonly InstagreatDbContext db;
+        private readonly IMapper mapper;
 
-        public UsersService(InstagreatDbContext db)
+        public UsersService(InstagreatDbContext db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper;
         }
 
         public async Task<bool> AddBiographyAsync(string biography, string username)
@@ -42,7 +45,7 @@
 
         public async Task<IEnumerable<UsersListingModel>> AllUsersAsync()
         {
-            var users = await this.db.Users.ProjectTo<UsersListingModel>().ToListAsync();
+            var users = await this.db.Users.ProjectTo<UsersListingModel>(mapper.ConfigurationProvider).ToListAsync();
 
             return users;
         }

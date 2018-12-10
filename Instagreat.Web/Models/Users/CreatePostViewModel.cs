@@ -7,6 +7,7 @@
     
     public class CreatePostViewModel
     {
+        [MinLength(1)]
         [MaxLength(ValidationConstants.MAX_POST_DESCRIPTION_LENGTH)]
         [Required]
         public string Description { get; set; }

@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instagreat.Web", "Instagreat.Web\Instagreat.Web.csproj", "{F15FF55E-D1C0-4551-92CB-D668510489E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Instagreat.Web", "Instagreat.Web\Instagreat.Web.csproj", "{F15FF55E-D1C0-4551-92CB-D668510489E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instagreat.Data", "Instagreat.Data\Instagreat.Data.csproj", "{46CB6FE8-B25E-49C6-A992-5E55313F21F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Instagreat.Data", "Instagreat.Data\Instagreat.Data.csproj", "{46CB6FE8-B25E-49C6-A992-5E55313F21F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instagreat.Common", "Instagreat.Common\Instagreat.Common.csproj", "{A9CEFCF5-F1A0-4380-BEDC-72196F94294B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Instagreat.Common", "Instagreat.Common\Instagreat.Common.csproj", "{A9CEFCF5-F1A0-4380-BEDC-72196F94294B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instagreat.Services", "Instagreat.Services\Instagreat.Services.csproj", "{2BA11F8F-FD85-4C10-B564-1578EEB91F83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Instagreat.Services", "Instagreat.Services\Instagreat.Services.csproj", "{2BA11F8F-FD85-4C10-B564-1578EEB91F83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instagreat.Tests", "Instagreat.Tests\Instagreat.Tests.csproj", "{D55B93D0-522E-4CB5-898C-BDBC1C7D0CCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{2BA11F8F-FD85-4C10-B564-1578EEB91F83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BA11F8F-FD85-4C10-B564-1578EEB91F83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BA11F8F-FD85-4C10-B564-1578EEB91F83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D55B93D0-522E-4CB5-898C-BDBC1C7D0CCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D55B93D0-522E-4CB5-898C-BDBC1C7D0CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D55B93D0-522E-4CB5-898C-BDBC1C7D0CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D55B93D0-522E-4CB5-898C-BDBC1C7D0CCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
