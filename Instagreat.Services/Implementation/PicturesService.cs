@@ -1,14 +1,12 @@
 ﻿namespace Instagreat.Services.Implementation
 {
+    using System;
     using System.Threading.Tasks;
     using Data;
     using Data.Models;
     using Contracts;
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
-    using System;
-    using Instagreat.Services.Models;
-    using System.Collections.Generic;
 
     public class PicturesService : IPicturesService
     {
@@ -21,7 +19,7 @@
 
         public async Task<bool> CreatePictureAsync(byte[] pictureData, string username)
         {
-            if (pictureData.Length < 0)
+            if (pictureData.Length <= 0)
             {
                 return false;
             }
@@ -79,7 +77,7 @@
 
         public async Task<bool> SetProfilePictureAsync(byte[] pictureData, string username)
         {
-            if (pictureData.Length < 0)
+            if (pictureData.Length <= 0)
             {
                 return false;
             }

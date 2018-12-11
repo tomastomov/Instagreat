@@ -179,5 +179,88 @@
             await Assert.ThrowsAsync<InvalidOperationException>(() => usersService.GetUserBiographyAsync("Pesho"));
         }
 
+        //ActivateUserAsync Tests
+
+        [Fact]
+        public async Task ActivateUserShouldReturnTrueIfAllDataIsValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho",
+                IsActive = false
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.SaveChangesAsync();
+
+            var usersService = new UsersService(this.db, null);
+
+            var result = await usersService.ActivateUserAsync("1");
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task ActivateUserShouldReturnFalseIfUserIdIsNotValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho",
+                IsActive = false
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.SaveChangesAsync();
+
+            var usersService = new UsersService(this.db, null);
+
+            var result = await usersService.ActivateUserAsync("2");
+
+            Assert.False(result);
+        }
+
+        //DeactivateUserAsync Tests
+
+        [Fact]
+        public async Task DeactivateUserShouldReturnTrueIfAllDataIsValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho",
+                IsActive = true
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.SaveChangesAsync();
+
+            var usersService = new UsersService(this.db, null);
+
+            var result = await usersService.DeactivateUserAsync("1");
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task DeactivateUserShouldReturnFalseIfUserIdIsNotValid()
+        {
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho",
+                IsActive = true
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.SaveChangesAsync();
+
+            var usersService = new UsersService(this.db, null);
+
+            var result = await usersService.DeactivateUserAsync("2");
+
+            Assert.False(result);
+        }
     }
 }

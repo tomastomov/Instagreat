@@ -69,7 +69,7 @@
                 return false;
             }
 
-            if(content.Length <= 0)
+            if(content.Length <= 0 || string.IsNullOrWhiteSpace(content))
             {
                 return false;
             }
@@ -102,7 +102,7 @@
                 else
                     return true;
             }
-            else
+            else if(typeToCheck == "reply")
             {
                 var commentReply = await this.db.ReplyLikes.FirstOrDefaultAsync(r => r.UserId == userId && r.ReplyId == id);
 
@@ -111,6 +111,10 @@
 
                 else
                     return true;
+            }
+            else
+            {
+                return false;
             }
             
         }
@@ -124,7 +128,7 @@
                 return false;
             }
 
-            else if (content.Length <= 0)
+            else if (content.Length <= 0 || string.IsNullOrWhiteSpace(content))
             {
                 return false;
             }
