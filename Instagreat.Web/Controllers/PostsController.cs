@@ -87,7 +87,7 @@
                 Description = postsData.Description,
                 Comments = postsData.Comments,
                 PublishTime = postsData.PublishTime,
-                Image = postsData.Image.ToImageString(),
+                Image = this.pictures.GetPostPicture(postsData.Id),
                 UserId = postsData.UserId,
                 Likes = postsData.UserLikes,
                 Username = postsData.User.UserName,

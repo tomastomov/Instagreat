@@ -1,12 +1,15 @@
-﻿namespace Instagreat.Tests
+﻿namespace Instagreat.Tests.Services
 {
     using System;
     using System.Threading.Tasks;
     using Data;
     using Data.Models;
-    using Services.Implementation;
+    using Instagreat.Services.Implementation;
     using Microsoft.EntityFrameworkCore;
     using Xunit;
+    using AutoMapper;
+    using Web.Infrastructure.Mapping;
+    using System.Collections.Generic;
 
     public class UsersServiceTests
     {
@@ -18,6 +21,43 @@
             this.db = new InstagreatDbContext(options);
         }
 
+        //AllUsersAsync Tests
+
+        [Fact]
+        public async Task AllUsersAsyncShouldReturnAllUsersIfAllDataIsValid()
+        {
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+
+            var mapper = mockMapper.CreateMapper();
+
+            var users = new List<User>()
+            {
+                new User
+                {
+                    Id = "1",
+                    UserName = "Gosho"
+                },
+                new User
+                {
+                    Id = "2",
+                    UserName = "Pesho"
+                }
+            };
+
+            await this.db.Users.AddRangeAsync(users);
+            await this.db.SaveChangesAsync();
+
+            var usersService = new UsersService(this.db, mapper);
+
+            var result = await usersService.AllUsersAsync();
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+        }
+        
         //AddBiograpyAsync Tests
 
         [Fact]

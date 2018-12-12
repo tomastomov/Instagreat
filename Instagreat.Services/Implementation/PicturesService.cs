@@ -108,6 +108,18 @@
 
             return true;
         }
+
+        public string GetPostPicture(int postId)
+        {
+            var post = this.db.Posts.Include(p => p.Image).FirstOrDefault(p => p.Id == postId);
+
+            if(post == null)
+            {
+                throw new InvalidOperationException($"No post with id: {postId} found!");
+            }
+
+            return post.Image.ToImageString();
+        }
         
     }
 }

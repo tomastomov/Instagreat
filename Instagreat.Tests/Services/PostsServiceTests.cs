@@ -1,8 +1,8 @@
-﻿namespace Instagreat.Tests
+﻿namespace Instagreat.Tests.Services
 {
     using Data;
     using Data.Models;
-    using Services.Implementation;
+    using Instagreat.Services.Implementation;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -11,8 +11,6 @@
     using System;
     using AutoMapper;
     using Web.Infrastructure.Mapping;
-    using AutoMapper.Configuration;
-    using Services.Models;
 
     public class PostsServiceTests
     {
@@ -23,68 +21,355 @@
             this.db = new InstagreatDbContext(options);
         }
 
-        //[Fact]
-        //public async Task AllPostsShouldReturnAllPostsExceptForTheOnesThatAreByTheGivenUsername()
-        //{
-        //    var mockMapper = new MapperConfiguration(cfg =>
-        //    {
-        //        cfg.AddProfile(new AutoMapperProfile());
-        //    });
-        //    var mapper = mockMapper.CreateMapper();
+        //AllPostsAsync Tests
 
-        //    var users = new List<User>()
-        //    {
-        //        new User
-        //        {
-        //            Id = "1",
-        //            UserName = "Gosho",
-        //            IsActive = true
-        //        },
-        //        new User
-        //        {
-        //            Id = "2",
-        //            UserName = "Pesho",
-        //            IsActive = true
-        //        }
-        //    };
+        [Fact]
+        public async Task AllPostsShouldReturnAllPostsExceptForTheOnesThatAreByTheGivenUsername()
+        {
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
 
-        //    await this.db.AddRangeAsync(users);
+            var users = new List<User>()
+            {
+                new User
+                {
+                    Id = "1",
+                    UserName = "Gosho",
+                    IsActive = true
+                },
+                new User
+                {
+                    Id = "2",
+                    UserName = "Pesho",
+                    IsActive = true
+                }
+            };
 
-        //    var posts = new List<Post>()
-        //    {
-        //        new Post
-        //        {
-        //            Id = 1,
-        //            UserId = "2",
-        //            IsActive = true,
-        //            PublishTime = new DateTime(2018,10,5)
-        //},
-        //        new Post
-        //        {
-        //            Id = 2,
-        //            UserId = "1",
-        //            IsActive = true,
-        //            PublishTime = new DateTime(2018,1,3)
-        //},
-        //        new Post
-        //        {
-        //            Id = 3,
-        //            UserId = "1",
-        //            IsActive = true,
-        //            PublishTime = new DateTime(2018,10,5)
-        //        }
-        //    };
+            await this.db.AddRangeAsync(users);
 
-        //    await db.Posts.AddRangeAsync(posts);
+            var posts = new List<Post>()
+            {
+                new Post
+                {
+                    Id = 1,
+                    UserId = "2",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,10,5)
+        },
+                new Post
+                {
+                    Id = 2,
+                    UserId = "1",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,1,3)
+        },
+                new Post
+                {
+                    Id = 3,
+                    UserId = "1",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,10,5)
+                }
+            };
 
-        //    await db.SaveChangesAsync();
+            await db.Posts.AddRangeAsync(posts);
 
-        //    var postsService = new PostsService(db, mapper);
+            await db.SaveChangesAsync();
 
-        //    var result = await postsService.AllPostsAsync("Gosho", 1, 3);
+            var postsService = new PostsService(db, mapper);
 
-        //    Assert.True(result.Count() == 1);
-        //}
+            var result = await postsService.AllPostsAsync("Gosho", 1, 3);
+
+            Assert.Single(result);
+        }
+
+        [Fact]
+        public async Task AllPostsShouldThrowInvalidOperationExceptionIfTheUsernameIsNotValid()
+        {
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            var users = new List<User>()
+            {
+                new User
+                {
+                    Id = "1",
+                    UserName = "Gosho",
+                    IsActive = true
+                },
+                new User
+                {
+                    Id = "2",
+                    UserName = "Pesho",
+                    IsActive = true
+                }
+            };
+
+            await this.db.AddRangeAsync(users);
+
+            var posts = new List<Post>()
+            {
+                new Post
+                {
+                    Id = 1,
+                    UserId = "2",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,10,5)
+        },
+                new Post
+                {
+                    Id = 2,
+                    UserId = "1",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,1,3)
+        },
+                new Post
+                {
+                    Id = 3,
+                    UserId = "1",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,10,5)
+                }
+            };
+
+            await db.Posts.AddRangeAsync(posts);
+
+            await db.SaveChangesAsync();
+
+            var postsService = new PostsService(db, mapper);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => postsService.AllPostsAsync("Tosho", 1, 3));
+        }
+
+        //AllPostsByUserAsync Tests
+
+        [Fact]
+        public async Task AllPostsByUserShouldReturnAllPostsForTheUserIfAllDataIsValid()
+        {
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            var users = new List<User>()
+            {
+                new User
+                {
+                    Id = "1",
+                    UserName = "Gosho",
+                    IsActive = true
+                },
+                new User
+                {
+                    Id = "2",
+                    UserName = "Pesho",
+                    IsActive = true
+                }
+            };
+
+            await this.db.AddRangeAsync(users);
+
+            var posts = new List<Post>()
+            {
+                new Post
+                {
+                    Id = 1,
+                    UserId = "1",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,10,5)
+        },
+                new Post
+                {
+                    Id = 2,
+                    UserId = "1",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,1,3)
+        },
+                new Post
+                {
+                    Id = 3,
+                    UserId = "2",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,10,5)
+                }
+            };
+
+            await db.Posts.AddRangeAsync(posts);
+
+            await db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, mapper);
+
+            var result = await postsService.AllPostsByUserAsync("Gosho");
+
+            Assert.Equal(2, result.Count());
+        }
+
+        [Fact]
+        public async Task AllPostsByUserShouldThrowInvalidOperationExceptionIfUsernameIsNotValid()
+        {
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            var users = new List<User>()
+            {
+                new User
+                {
+                    Id = "1",
+                    UserName = "Gosho",
+                    IsActive = true
+                },
+                new User
+                {
+                    Id = "2",
+                    UserName = "Pesho",
+                    IsActive = true
+                }
+            };
+
+            await this.db.AddRangeAsync(users);
+
+            var posts = new List<Post>()
+            {
+                new Post
+                {
+                    Id = 1,
+                    UserId = "1",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,10,5)
+        },
+                new Post
+                {
+                    Id = 2,
+                    UserId = "1",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,1,3)
+        },
+                new Post
+                {
+                    Id = 3,
+                    UserId = "2",
+                    IsActive = true,
+                    PublishTime = new DateTime(2018,10,5)
+                }
+            };
+
+            await db.Posts.AddRangeAsync(posts);
+
+            await db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, mapper);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => postsService.AllPostsByUserAsync("Tosho"));
+        }
+
+        //DetailsAsync Tests
+
+        [Fact]
+        public async Task DetailsShouldReturnTheDetailsIfAllDataIsValid()
+        {
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            var comment = new Comment
+            {
+                Id = 1,
+                PostId = 1,
+                Content = "GoshoComment",
+                UserId = "1"
+            };
+
+            var reply = new Reply
+            {
+                Id = 1,
+                CommentId = 1,
+                Content = "GoshoReply"
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.Comments.AddAsync(comment);
+            await this.db.CommentReplies.AddAsync(reply);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, mapper);
+
+            var result = await postsService.DetailsAsync(1);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task DetailsShouldThrowInvalidOperationExceptionIfThePostIdIsNotValid()
+        {
+            var mockMapper = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = mockMapper.CreateMapper();
+
+            var user = new User
+            {
+                Id = "1",
+                UserName = "Gosho"
+            };
+
+            var post = new Post
+            {
+                Id = 1,
+                UserId = "1"
+            };
+
+            var comment = new Comment
+            {
+                Id = 1,
+                PostId = 1,
+                Content = "GoshoComment",
+                UserId = "1"
+            };
+
+            var reply = new Reply
+            {
+                Id = 1,
+                CommentId = 1,
+                Content = "GoshoReply"
+            };
+
+            await this.db.Users.AddAsync(user);
+            await this.db.Posts.AddAsync(post);
+            await this.db.Comments.AddAsync(comment);
+            await this.db.CommentReplies.AddAsync(reply);
+            await this.db.SaveChangesAsync();
+
+            var postsService = new PostsService(this.db, mapper);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => postsService.DetailsAsync(2));
+        }
 
         //CreatePostAsync Tests
         //CreatePost Tests

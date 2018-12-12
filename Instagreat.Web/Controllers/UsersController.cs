@@ -52,7 +52,7 @@
             {
                 Description = p.Description,
                 Id = p.Id,
-                Image = p.Image.ToImageString(),
+                Image = this.pictures.GetPostPicture(p.Id),
                 PublishTime = p.PublishTime,
                 UserId = p.UserId,
                 User = p.User,

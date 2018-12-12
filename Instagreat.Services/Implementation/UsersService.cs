@@ -46,7 +46,7 @@
         public async Task<IEnumerable<UsersListingModel>> AllUsersAsync()
         {
             var users = await this.db.Users.ProjectTo<UsersListingModel>(mapper.ConfigurationProvider).ToListAsync();
-
+            
             return users;
         }
 

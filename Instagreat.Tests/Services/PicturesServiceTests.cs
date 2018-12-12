@@ -1,8 +1,8 @@
-﻿namespace Instagreat.Tests
+﻿namespace Instagreat.Tests.Services
 {
     using Data;
     using Data.Models;
-    using Services.Implementation;
+    using Instagreat.Services.Implementation;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Threading.Tasks;

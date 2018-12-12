@@ -3,6 +3,7 @@
     using Common.Mapping;
     using Data.Models;
     using System;
+    using System.Collections;
     using System.Collections.Generic;
 
     public class AllPostsServiceModel : IMapFrom<Post>
@@ -26,6 +27,6 @@
         public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
 
         public IEnumerable<UserPostLikes> UserLikes { get; set; } = new List<UserPostLikes>();
-
+        
     }
 }

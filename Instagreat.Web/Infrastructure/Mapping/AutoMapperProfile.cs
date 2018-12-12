@@ -1,11 +1,9 @@
 ﻿namespace Instagreat.Web.Infrastructure.Mapping
 {
     using AutoMapper;
-    using Common.Mapping;
     using Data.Models;
+    using Services.Models.Users;
     using Services.Models;
-    using System;
-    using System.Linq;
 
     public class AutoMapperProfile : Profile
     {
@@ -14,6 +12,8 @@
 
             CreateMap<Post, AllPostsServiceModel>();
             CreateMap<AllPostsServiceModel, Post>();
+            CreateMap<User, UsersListingModel>();
+            CreateMap<UsersListingModel, User>();
             //var allTypes = AppDomain
             //    .CurrentDomain
             //    .GetAssemblies()
