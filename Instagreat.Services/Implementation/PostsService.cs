@@ -33,7 +33,7 @@
             }
 
             var posts = await this.db.Posts.Include(p => p.User).Include(p => p.UserLikes).OrderByDescending(p => p.PublishTime).Where(p => p.UserId != userId && p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).Select(p => mapper.Map<AllPostsServiceModel>(p)).ToListAsync();
-
+            
             if (posts == null)
             {
                 throw new InvalidOperationException("No posts found!");
@@ -42,7 +42,7 @@
             return posts;
         }
 
-        public async Task<IEnumerable<AllPostsServiceModel>> AllPostsByUserAsync(string username, int page = 1, int pageSize = 3)
+        public async Task<IEnumerable<AllPostsServiceModel>> AllPostsByUserAsync(string username, int page = 1, int pageSize = 10)
         {
             var userId = this.db.Users.Where(u => u.UserName == username).Select(u => u.Id).FirstOrDefault();
 
@@ -95,7 +95,7 @@
 
         public async Task<AllPostsServiceModel> DetailsAsync(int id)
         {
-            var post = await this.db.Posts.Where(p => p.Id == id && p.IsActive).Include(p => p.User).Include(p => p.Comments)
+            var post = await this.db.Posts.Where(p => p.Id == id && p.IsActive).Include(p => p.User).Include(p => p.UserLikes).Include(p => p.Comments)
                 .Select(p => mapper.Map<AllPostsServiceModel>(p)).FirstOrDefaultAsync();
             var replies = await this.db.Comments.Include(c => c.Author).ThenInclude(c => c.ProfilePicture).Where(p => p.PostId == id).ToListAsync();
             var commentReplies = await this.db.CommentReplies.Include(c => c.Author).ThenInclude(c => c.ProfilePicture).Where(p => replies.Contains(p.Comment)).ToListAsync();
@@ -327,6 +327,18 @@
             {
                 return false;
             };
+        }
+
+        public async Task<IEnumerable<AllPostsServiceModel>> Search(string searchText, int page = 1, int pageSize = 3)
+        {
+            if(searchText.Length <= 0)
+            {
+                throw new InvalidOperationException("Invalid search text!");
+            }
+
+            var posts = await this.db.Posts.Include(p => p.User).Include(p => p.Comments).Include(p => p.UserLikes).OrderByDescending(p => p.PublishTime).Where(p => p.Description.Contains(searchText) && p.IsActive).Skip((page - 1) * pageSize).Take(pageSize).Select(p => mapper.Map<AllPostsServiceModel>(p)).ToListAsync();
+
+            return posts;
         }
     }
 }

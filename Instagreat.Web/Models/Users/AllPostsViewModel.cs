@@ -1,6 +1,7 @@
 ﻿namespace Instagreat.Web.Models.Users
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
 
     public class AllPostsViewModel
     {
@@ -20,6 +21,9 @@
             => this.CurrentPage == this.TotalPages? this.TotalPages: this.CurrentPage + 1;
 
         public string Comment { get; set; }
+
+        [Required]
+        public string SearchText { get; set; }
 
         public string ProfilePicture { get; set; }
         

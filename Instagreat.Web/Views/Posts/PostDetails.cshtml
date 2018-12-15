@@ -25,6 +25,25 @@
     </div>
 
     @await Html.PartialAsync("_CommentAndLikePartial", Model)
+
+    @if (User.IsInRole(RolesConstants.ADMINISTRATOR_ROLE))
+    {
+        <div class="row button">
+            <form method="post" onclick="return confirm('Are you sure you want to delete this?')" asp-controller="Admins" asp-action="DeletePost" asp-route-id="@Model.Id">
+                <input type="submit" class="col-md-2 btn btn-danger" value="Delete Post" />
+            </form>
+        </div>
+    }
+
+    else if (Model.User.UserName == User.Identity.Name)
+    {
+        <div class="row button">
+            <form method="post" onclick="return confirm('Are you sure you want to delete this?')" asp-controller="Posts" asp-action="DeletePost" asp-route-postId="@Model.Id" asp-route-userId="@Model.UserId">
+                <input type="submit" class="col-md-2 btn btn-danger" value="Delete Post" />
+            </form>
+        </div>
+    }
+
     <div id="commentsDiv">
         @if (Model.Comments.Count() <= 0)
         {

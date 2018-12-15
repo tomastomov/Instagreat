@@ -19,7 +19,7 @@
         private readonly IPicturesService pictures;
         private readonly IUsersService users;
         private readonly UserManager<User> userManager;
-        private const int PageSize = 3;
+        private const int PageSize = 10;
 
         public UsersController(IPostsService posts, UserManager<User> userManager, IUsersService users, IPicturesService pictures)
         {

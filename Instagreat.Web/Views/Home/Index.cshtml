@@ -8,10 +8,28 @@
     {
         <h1 style="color:green;text-align:center">@TempData["Success"]</h1>
     }
-        <h1 style="text-align:center">
-            Welcome, @Model.Username
-            <img class="img-circle" src="@Model.ProfilePicture" height="120px" width="120px" />
-        </h1>
+
+    <div class="container row">
+        <form method="post" asp-controller="Home" asp-action="Search">
+            <div class="col-md-8">
+                <input asp-for="SearchText" class="form-control" />
+            </div>
+            <div class="col-md-4">
+                <input type="submit" value="Search" class="btn btn-lg btn-default" />
+            </div>
+        </form>
+    </div>
+
+        <div class="container row">
+            <div class="col-md-4">
+                <h1>
+                    Welcome, @Model.Username
+                </h1>
+            </div>
+            <div class="col-md-8">
+                <img class="img-circle" src="@Model.ProfilePicture" height="80" width="80" />
+            </div>
+        </div>
     <h2 style="text-align:center">Feed</h2>
     
     @await Html.PartialAsync("_PostsListingPartial", Model)

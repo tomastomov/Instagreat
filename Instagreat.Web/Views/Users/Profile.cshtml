@@ -2,28 +2,47 @@
 @{
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-<h2 style="text-align:center">@ViewData["Title"]</h2>
-
-@{
     var biography = Model.Biography != null ? Model.Biography : "No biography yet!";
 }
+<div class="container">
+    <div class="profile">
+        <div class="profile-image">
+            @if (Model.ProfilePicture != null)
+            {
+                <image class="img-circle " width="220px" height="220px" src="@Model.ProfilePicture" alt="Profile Picture"></image>
+            }
+            else
+            {
+                < h2 style = "text-align:center" > No profile picture yet!</ h2 >
+            }
+        </div>
+        <div class="profile-user-settings">
 
-<h2 style="text-align:center">Profile Picture</h2>
+            <h1 class="profile-user-name">@Model.Username</h1>
 
-@if (Model.ProfilePicture != null)
-{
-    <div style="display: flex; justify-content: center;">
-        <image class="img-rounded" width="360px" height="360px" src="@Model.ProfilePicture"></image>
+            <button class="btn profile-edit-btn">Edit Profile</button>
+
+            <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
+
+        </div>
+        <div class="profile-stats">
+
+            <ul>
+                <li><span class="profile-stat-count">@Model.AllPosts.Count()</span> posts</li>
+                <li><span class="profile-stat-count">188</span> followers</li>
+                <li><span class="profile-stat-count">206</span> following</li>
+            </ul>
+
+        </div>
+
+        <div class="profile-bio">
+
+            <p><span class="profile-real-name">@Model.Username</span> @biography</p>
+
+        </div>
     </div>
-}
-else
-{
-    <h2 style="text-align:center">No profile picture yet!</h2>
-}
+</div>
 
-<h2 style="text-align:center">Bio</h2>
-<h3 style="text-align:center">@biography</h3>
 @if (Model.Username == User.Identity.Name)
 {
     <div class="row button">
@@ -52,4 +71,36 @@ else
 
 <h3 style="text-align:center">Posts</h3>
 
-@await Html.PartialAsync("_PostsListingPartial", Model)
+<div class="container">
+    <div class="gallery">
+        @if (Model.AllPosts.Count() == 0)
+        {
+            <div class="row">
+                <h3 style="text-align:center" class="col-md-12">No posts yet!</h3>
+            </div>
+            <div class="row">
+                <h3 style="text-align:center" class="col-md-12">Want to post? <a asp-controller="Posts" asp-action="Create">Click here</a></h3>
+            </div>
+        }
+        else
+        {
+            @foreach (var post in Model.AllPosts)
+            {
+                <div class="gallery-item">
+                    <a class="hyperlinkless" asp-controller="Posts" asp-action="PostDetails" asp-route-id="@post.Id">
+                        <img src="@post.Image" class="gallery-image" />
+                        <div class="gallery-item-info">
+                            <ul>
+                                <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></i>@post.Likes.Count()</li>
+                                <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="glyphicon glyphicon-comment" aria-hidden="true"></i>@post.Comments.Count()</li>
+                            </ul>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+
+    </div>
+</div>
+
+@await Html.PartialAsync("_PaginationPartial", Model);

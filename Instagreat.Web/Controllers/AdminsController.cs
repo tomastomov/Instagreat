@@ -105,7 +105,9 @@
             return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
         }
 
-        public async Task<IActionResult> DeleteReplyAsync(int id)
+        [HttpPost]
+        [Route(nameof(DeleteReply) + "/{id}")]
+        public async Task<IActionResult> DeleteReply(int id)
         {
             if (!ModelState.IsValid)
             {

@@ -1,0 +1,16 @@
+﻿@model AllPostsViewModel
+@{
+    ViewData["Title"] = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Search results</h2>
+
+@if (Model.AllPosts.Count() == 0)
+{
+    <h1>Nothing found.</h1>
+}
+else
+{
+    @await Html.PartialAsync("_PostsListingPartial", Model);
+}

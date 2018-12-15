@@ -10,6 +10,7 @@
     using Common.Constants;
     using Models.Users;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
 
     [Route("posts")]
     [Authorize]
@@ -52,8 +53,16 @@
                 }
             }
 
-            var successSavePicture = await this.pictures.CreatePictureAsync(imageAsBytes, userManager.GetUserName(User));
+            var isPicture = await IsImageType(model.Image);
 
+            if (!isPicture)
+            {
+                ModelState.AddModelError("Image", "Please choose between jpeg, jpg or png format.");
+                return View(model);
+            }
+
+            var successSavePicture = await this.pictures.CreatePictureAsync(imageAsBytes, userManager.GetUserName(User));
+            
             if (!successSavePicture)
             {
                 ModelState.AddModelError("Picture", "No picture uploaded!");
@@ -89,6 +98,7 @@
                 PublishTime = postsData.PublishTime,
                 Image = this.pictures.GetPostPicture(postsData.Id),
                 UserId = postsData.UserId,
+                User = postsData.User,
                 Likes = postsData.UserLikes,
                 Username = postsData.User.UserName,
                 IsLiked = this.posts.IsLiked(currentUsername, id),
@@ -116,6 +126,18 @@
             }
 
             return RedirectToAction(ControllerConstants.Index, ControllerConstants.Home);
+        }
+
+        private async Task<bool> IsImageType(IFormFile image)
+        {
+            if(image.ContentType.Contains("image/jpg") || image.ContentType.Contains("image/jpeg") || image.ContentType.Contains("image/png"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

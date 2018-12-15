@@ -12,7 +12,9 @@
         Task<IEnumerable<AllPostsServiceModel>> AllPostsByUserAsync(string username, int page = 1, int pageSize = 3);
 
         Task<IEnumerable<AllPostsServiceModel>> AllPostsAsync(string username, int page = 1, int pageSize = 3);
-        
+
+        Task<IEnumerable<AllPostsServiceModel>> Search(string searchText, int page = 1, int pageSize = 3);
+
         Task<AllPostsServiceModel> DetailsAsync(int id);
 
         Task<bool> DeletePostAdminAsync(int postId);

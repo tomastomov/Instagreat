@@ -10,12 +10,14 @@
     using System;
     using Microsoft.AspNetCore.Identity;
     using Data.Models;
+    using Microsoft.AspNetCore.Authorization;
 
     public class HomeController : Controller
     {
         private readonly IPostsService posts;
         private readonly IPicturesService pictures;
         private readonly UserManager<User> userManager;
+        private const int PageSize = 3;
 
         public HomeController(IPostsService posts, UserManager<User> userManager, IPicturesService pictures)
         {
@@ -24,7 +26,7 @@
             this.pictures = pictures;
         }
 
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 2)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 3)
         {
             if(page <= 0)
             {
@@ -64,6 +66,41 @@
             }
 
             return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Search(string searchText)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var postsData = await this.posts.Search(searchText);
+
+            var username = User.Identity.Name;
+            var currentUser = await this.userManager.FindByNameAsync(username);
+            await this.pictures.GetProfilePictureAsync(username);
+
+            var allPosts = postsData.Select(p => new MyPostsViewModel
+            {
+                Id = p.Id,
+                Image = this.pictures.GetPostPicture(p.Id),
+                Description = p.Description,
+                Likes = p.UserLikes,
+                User = p.User,
+                Comments = p.Comments,
+                CurrentUser = currentUser
+            });
+
+            return View(new AllPostsViewModel
+            {
+                AllPosts = allPosts,
+                CurrentPage = 1,
+                TotalPages = (int)Math.Ceiling(allPosts.Count() / (double)PageSize),
+                Username = username
+            });
         }
 
         public IActionResult About()
