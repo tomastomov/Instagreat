@@ -1,5 +1,5 @@
 ﻿function comment(username, id, profilePicture, typeToAdd) {
-    let baseUrl = "https://localhost:44382/"
+    let baseUrl = "/"
     let textBox = $(`#add${typeToAdd}${id}`);
     let comment = textBox.val();
     let data = {
