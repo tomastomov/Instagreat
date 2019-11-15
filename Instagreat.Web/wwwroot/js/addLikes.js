@@ -1,6 +1,6 @@
 ﻿function like(username ,id, typeToLike) {
     let likeButton = $(`#${typeToLike}Btn${id}`);
-    let baseUrl = "https://localhost:44382/api/posts";
+    let baseUrl = "/api/posts";
     let data = {
         'username': username,
         'postId': id,
